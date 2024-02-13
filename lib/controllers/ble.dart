@@ -96,7 +96,7 @@ class BLEController extends GetxController {
     }
 
     try {
-      final timer = Timer(const Duration(seconds: 5), () async {
+      final connecttimeouttimer = Timer(const Duration(seconds: 5), () async {
         Get.snackbar(
           "Bluetooth error",
           "We couldn't establish a connection. Likely, the device is not powered on.",
@@ -105,68 +105,109 @@ class BLEController extends GetxController {
           icon: const Icon(Icons.bluetooth_disabled),
           snackPosition: SnackPosition.BOTTOM,
           duration: const Duration(seconds: 5),
-          mainButton: TextButton(onPressed: () {}, child: const Text("Okay")),
+          margin: const EdgeInsets.all(20),
+          backgroundColor: const Color.fromARGB(255, 73, 29, 20),
         );
 
         // Prevent autoconnection
         device.disconnect();
       });
+
+      Get.snackbar(
+        "Connecting to your device",
+        "Please wait while we establish a connection.",
+        animationDuration: const Duration(milliseconds: 200),
+        borderRadius: 2,
+        icon: const Icon(Icons.bluetooth_disabled),
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 3),
+        margin: const EdgeInsets.all(20),
+        backgroundColor: const Color.fromARGB(255, 39, 73, 20),
+      );
       
       await device.connect();
-      timer.cancel();
-      
-      connecteddevice = device;
-      connected.value = true;
+      connecttimeouttimer.cancel();
 
       print("LOG: Device connected");
 
-      // Get services
-      List<BluetoothService> services = await device.discoverServices();
-      for (BluetoothService service in services) {
-        for (BluetoothCharacteristic characteristic in service.characteristics) {
-          if (characteristic.uuid.toString() == "0000ffe1-0000-1000-8000-00805f9b34fb") {
-            targetservice = service;
-            targetcharacteristic = characteristic;
+      final connectionuitimeouttimer = Timer(const Duration(seconds: 3), () async {
+        
+      connecteddevice = device;
+      connected.value = true;
+
+        // Get services
+        List<BluetoothService> services = await device.discoverServices();
+        for (BluetoothService service in services) {
+          for (BluetoothCharacteristic characteristic in service.characteristics) {
+            if (characteristic.uuid.toString() == "0000ffe1-0000-1000-8000-00805f9b34fb") {
+              targetservice = service;
+              targetcharacteristic = characteristic;
+            }
           }
         }
-      }
 
-      if (targetcharacteristic != null) {
-        print("LOG: Valid GatorByte device detected.");
-        Future.delayed(const Duration(milliseconds: 100), () {
-          Get.to(() => const HomePageWidget());
-        });
-      }
-      else {
-        print("LOG: Not a valid GatorByte device.");
-      }
+        if (targetcharacteristic != null) {
+          print("LOG: Valid GatorByte device detected.");
+          Future.delayed(const Duration(milliseconds: 100), () {
+            Get.to(() => const HomePageWidget());
+          });
+        }
+        else {
+          print("LOG: Not a valid GatorByte device.");
+        }
 
-      // Read the value of the target characteristic
-      if (targetservice != null && targetcharacteristic != null) {
-        listenfordata();
-      }
+        // Read the value of the target characteristic
+        if (targetservice != null && targetcharacteristic != null) {
+          listenfordata();
+        }
 
-      // Handle disconnections
-      Future.delayed(const Duration(seconds: 1), () {
-        statelistener = device.state.listen((event) {
-          print ("LOG: State: " + event.toString());
-          if (event == BluetoothDeviceState.disconnected || event == BluetoothDeviceState.disconnecting) {
-            try {
-              statelistener.cancel();
-              subscription.cancel();
-              datastreamlistener.cancel();
-              onDisconnect();
-              connected.value = false;
-              print("LOG: Device disconnected.");
+        // Handle disconnections
+        Future.delayed(const Duration(seconds: 1), () {
+          statelistener = device.state.listen((event) async {
+            print ("LOG: State: " + event.toString());
+            if (event == BluetoothDeviceState.disconnected || event == BluetoothDeviceState.disconnecting) {
+              
+
+              try {
+                print('LOG: Disconnecting from device: ${connecteddevice.name}');
+                await connecteddevice.disconnect();
+                connected.value = false;
+
+              } catch (e) {
+                print('LOG: Error disconnecting from device: $e');
+              }
+              
+              try {
+                
+                Get.snackbar(
+                  "Notification",
+                  "The device has disconnected.",
+                  animationDuration: const Duration(milliseconds: 200),
+                  borderRadius: 2,
+                  icon: const Icon(Icons.bluetooth_disabled),
+                  snackPosition: SnackPosition.BOTTOM,
+                  duration: const Duration(seconds: 3),
+                  margin: const EdgeInsets.all(20),
+                  backgroundColor: const Color.fromARGB(255, 94, 80, 13),
+                );
+
+                statelistener!.cancel();
+                subscription!.cancel();
+                datastreamlistener!.cancel();
+                onDisconnect();
+                connected.value = false;
+                print("LOG: Device disconnected.");
+
+              }
+              catch (e) {
+                print ("LOGERR: Error while cleanup after disconnecting.");
+                print (e);
+              }
+
+              // // Show devices page
+              // Get.offAll(DevicesPage());
             }
-            catch (e) {
-              print ("LOGERR: Error disconnecting from device.");
-              print (e);
-            }
-
-            // // Show devices page
-            // Get.offAll(DevicesPage());
-          }
+          });
         });
       });
     } catch (e) {

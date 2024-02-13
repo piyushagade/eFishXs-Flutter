@@ -213,11 +213,13 @@ class DevicesPage extends StatelessWidget {
                                                                   .primary),
                                                     ),
                                                     onPressed: () {
-                                                        // Connect to the device
-                                                        controller
-                                                            .connectdevice(
-                                                                context,
-                                                                data.device);
+                                                      
+                                                      // Hide bottom sheet
+                                                      Navigator.pop(context);
+
+                                                      // Connect to the device
+                                                      controller
+                                                          .connectdevice(context, data.device);
                                                     },
                                                   ),
                                                 ],
