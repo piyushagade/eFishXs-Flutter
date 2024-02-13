@@ -12,21 +12,16 @@ class DashboardWidget extends StatefulWidget {
 }
 
 class _DashboardWidgetState extends State<DashboardWidget> {
-  late BLEController controller;
 
   @override
   void initState() {
     super.initState();
-    controller = BLEController();
-
-    // Start scanning for devices
-    controller.scandevices();
-
   }
 
   @override
   Widget build(BuildContext context) {
     print("Showing dashboard");
+    final controller = Get.find<BLEController>(); // Get instance of BLEController
 
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
@@ -41,11 +36,6 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                 onTap: () {
                   // Handle button tap
                   controller.disconnectdevice();
-
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const DevicesPage()),
-                  );
                 },
                 child: Padding(
                   padding:

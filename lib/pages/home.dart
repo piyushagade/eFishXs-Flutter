@@ -2,6 +2,7 @@ import 'package:efishxs/components/homenavbar.dart';
 import 'package:efishxs/pages/dashboard.dart';
 import 'package:efishxs/pages/devices.dart';
 import 'package:efishxs/pages/newrecord.dart';
+import 'package:efishxs/pages/serialmonitor.dart';
 import 'package:efishxs/pages/settings.dart';
 import 'package:flutter/material.dart';
 
@@ -22,7 +23,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     });
   }
 
-  final List<Widget> _pages = [const DashboardWidget(), const SettingsPage(), const NewRecordPage()];
+  final List<Widget> _pages = [const DashboardWidget(), SerialMonitorPage(), const SettingsPage(), const NewRecordPage()];
 
   @override
   Widget build(BuildContext context) {

@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:ffi';
 
 import 'package:efishxs/pages/devices.dart';
 import 'package:efishxs/pages/home.dart';
+import 'package:efishxs/pages/serialmonitor.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_blue/flutter_blue.dart';
@@ -12,14 +14,28 @@ class BLEController extends GetxController {
   FlutterBlue ble = FlutterBlue.instance;
   late BluetoothDevice connecteddevice;
   bool connected = false;
-  
+
+  late SerialMonitorPage serialMonitorPage;
+
+  // Define a function type for the callback
+  late void Function() onDisconnect;
+
+  // Constructor to receive the callback function
+  BLEController({required this.onDisconnect});
+
   BluetoothDevice? device;
-  BluetoothCharacteristic? characteristic;
   List<String> characteristicInfo = [];
   List<int> buffer = [];
+  late BluetoothCharacteristic? targetcharacteristic;
   late BluetoothService targetservice;
   
   late Timer timer;
+  late StreamSubscription<List<ScanResult>> subscription;
+
+  List<String> serialdataarray = ["test", "xcv"].obs;
+  var lastserialline = "".obs;
+
+  bool isScanning = false;
 
   @override
   void dispose() {
@@ -29,88 +45,98 @@ class BLEController extends GetxController {
   }
 
   Future<void> scandevices() async {
+    
+    if (!isScanning) {
+      isScanning = true;
 
-    // Check Bluetooth permissions
-    var blePermission = await Permission.bluetoothScan.status;
-    if (blePermission.isDenied) {
-      if (await Permission.bluetoothScan.request().isGranted &&
-          await Permission.bluetoothConnect.request().isGranted) {
+      // Check Bluetooth permissions
+      var blePermission = await Permission.bluetoothScan.status;
+      if (blePermission.isDenied) {
+        if (await Permission.bluetoothScan.request().isGranted &&
+            await Permission.bluetoothConnect.request().isGranted) {
+        }
+      } else {
       }
-    } else {
+
+      // Start scanning
+      await ble.startScan(timeout: Duration(seconds: 10));
+
+      isScanning = false;
+
+      // connecteddevice!.disconnect();
+      // Listen to scan results
+      subscription = ble.scanResults.listen((results) {
+        // Process scan results here
+        // print("Found ${results.length} devices");
+
+        for (ScanResult result in results) {
+          // Add the device name to the list
+        }
+      });
+
+      // Stop scanning after 10 seconds
+      await Future.delayed(const Duration(seconds: 5));
+      await ble.stopScan();
+      subscription.cancel();
     }
 
-    // Start scanning
-    await ble.startScan(timeout: Duration(seconds: 4));
-
-    // connecteddevice!.disconnect();
-    // Listen to scan results
-    var subscription = ble.scanResults.listen((results) {
-      // Process scan results here
-      print("Found ${results.length} devices");
-
-      for (ScanResult result in results) {
-        // Add the device name to the list
-      }
-    });
-
-    // Stop scanning after 10 seconds
-    await Future.delayed(Duration(seconds: 5));
-    await ble.stopScan();
-    subscription.cancel();
+    else {
+      print('Another scan is already in progress.');
+    }
   }
 
   void connectdevice(context, BluetoothDevice device) async {
-    print('Connecting to device: ' + device.name + ", ID: " + device.id.id);
+    print('LOG: Connecting to device: ${device.name}');
 
     try {
       await device.connect();
-      print("Device connected");
+      print("LOG: Device connected");
       connecteddevice = device;
       connected = true;
 
-      Future.delayed(const Duration(seconds: 1), () {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const HomePageWidget()),
-        );
+      Future.delayed(const Duration(milliseconds: 100), () {
+        Get.to(const HomePageWidget());
       });
-
-      BluetoothDeviceType type = device.type;
-      // Device connected successfully
 
       // Get services
       List<BluetoothService> services = await device.discoverServices();
-        for (BluetoothService service in services) {
-          for (BluetoothCharacteristic characteristic in service.characteristics) {
-            if (characteristic.uuid.toString() == "0000ffe1-0000-1000-8000-00805f9b34fb") {
-              targetservice = service;
-            }
+      for (BluetoothService service in services) {
+        for (BluetoothCharacteristic characteristic in service.characteristics) {
+          if (characteristic.uuid.toString() == "0000ffe1-0000-1000-8000-00805f9b34fb") {
+            targetservice = service;
+            targetcharacteristic = characteristic;
           }
         }
+      }
 
-        // Read the value of the target characteristic
-        if (targetservice != null) {
+      // Read the value of the target characteristic
+      if (targetservice != null && targetcharacteristic != null) {
+        listenfordata();
 
-          readdata();
-          // Start periodic timer
-          timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
-            readdata();
-          });
-        }
+        // readdata();
+        // // Start periodic timer
+        // timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
+        //   readdata();
+        // });
+      }
 
+      subscription.cancel();
 
       // Handle disconnections
       Future.delayed(const Duration(seconds: 1), () {
         device.state.listen((event) {
           if (event == BluetoothDeviceState.disconnected) {
-            print('Device disconnected. Showing the list.');
-
-            if(connected) {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const DevicesPage()),
-              );
+            try {
+              subscription.cancel();
+              onDisconnect();
             }
+            catch (e) {
+              print ("LOG: Error");
+              print (e);
+            }
+
+            print("LOG: Device disconnected.");
+            Get.to(const DevicesPage());
           }
         });
       });
@@ -120,29 +146,38 @@ class BLEController extends GetxController {
     }
   }
 
-  Future<String> readdata () async {
-    List<BluetoothCharacteristic> characteristics = targetservice.characteristics;
-    for (BluetoothCharacteristic characteristic in characteristics) {
-      if (characteristic.uuid.toString() == '0000ffe1-0000-1000-8000-00805f9b34fb') {
-        
-        List<int> value = await characteristic.read();
-        // Convert the value to a string and update the UI
-        var characteristicValue = String.fromCharCodes(value);
-        print (characteristicValue);
-        return characteristicValue;
-      }
+  Future<void> listenfordata() async {
+    try {
+
+      // Enable notifications for this characteristic
+      await targetcharacteristic!.setNotifyValue(true);
+
+      // Listen for notifications
+      targetcharacteristic!.value.listen((value) {
+        var data = String.fromCharCodes(value);
+        serialdataarray.add(data);
+      });
+    } catch (e) {
+      // Handle errors
+      print("LOGERR: " + e.toString());
     }
-    return "";
   }
 
   void disconnectdevice() async {
-    // try {
-    //   await connecteddevice.disconnect();
-    //   connected = false;
-    //   print('Disconnected from device: ${connecteddevice.name}, ID: ${connecteddevice.id}');
-    // } catch (e) {
-    //   print('Error disconnecting from device: $e');
-    // }
+    try {
+      print('LOG: Disconnecting from device: ${connecteddevice.name}');
+      await connecteddevice.disconnect();
+      connected = false;
+    } catch (e) {
+      print('LOG: Error disconnecting from device: $e');
+    }
+  }
+
+  bool isconnected () {
+    return connected;
+  }
+
+  void disconnectalldevices() async {
 
     List<BluetoothDevice> connectedDevices = await ble.connectedDevices;
     // Disconnect from each connected device

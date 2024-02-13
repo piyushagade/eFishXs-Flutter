@@ -1,5 +1,6 @@
 import 'package:efishxs/theme/themeprovider.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:efishxs/pages/intro.dart';
 
@@ -22,7 +23,7 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
     @override
     Widget build(BuildContext context) {
-        return MaterialApp(
+        return GetMaterialApp(
             debugShowCheckedModeBanner: false,
             showPerformanceOverlay: false,                        
             home: const IntroPage(),
