@@ -8,7 +8,7 @@ ThemeData lightmode = ThemeData(
     primary: Colors.grey.shade200,
     secondary: Colors.grey.shade400,
     inversePrimary: Colors.grey.shade800,
-    surface: Colors.grey.shade200
+    surface: Colors.grey.shade200,
   ),
 );
 

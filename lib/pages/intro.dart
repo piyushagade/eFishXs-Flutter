@@ -10,7 +10,7 @@ class IntroPage extends StatelessWidget {
     Future.delayed(const Duration(seconds: 1), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const DevicesPage()),
+        MaterialPageRoute(builder: (context) => DevicesPage()),
       );
     });
 
@@ -22,7 +22,7 @@ class IntroPage extends StatelessWidget {
           children: [
               Padding(
                 padding: const EdgeInsets.all(20.0),
-                child: Image.asset("assets/images/logo.png", height: 150),
+                child: Image.asset("assets/images/cereal.png", height: 150),
               ),
 
               const SizedBox(height: 40),

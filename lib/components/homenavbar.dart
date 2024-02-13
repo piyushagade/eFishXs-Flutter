@@ -14,13 +14,13 @@ class BottomNavBar extends StatelessWidget {
         iconSize: 24,
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
         
-        color: Theme.of(context).colorScheme.secondary,
+        color: Theme.of(context).colorScheme.surface,
         activeColor: Theme.of(context).colorScheme.inversePrimary,
         tabBorder: Border.all(color: Colors.transparent),
         tabActiveBorder: Border.all(color: Colors.transparent),
         tabBackgroundColor: Theme.of(context).colorScheme.surface,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
-        tabBorderRadius: 36,
+        tabBorderRadius: 2,
         tabs: const [
           GButton(icon: Icons.area_chart, text: "Dashboard",),
           GButton(icon: Icons.code, text: "Monitor",),

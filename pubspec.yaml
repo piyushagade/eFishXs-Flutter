@@ -1,5 +1,5 @@
 name: efishxs
-description: "A new Flutter project."
+description: "Dashboard application for BLE communication with embedded devices."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -35,9 +35,6 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  isar: ^3.1.0+1
-  isar_flutter_libs: ^3.1.0+1
-  path_provider: ^2.1.2
   provider: ^6.1.1
   google_fonts: ^6.1.0
   google_nav_bar: ^5.0.6  
@@ -45,7 +42,6 @@ dependencies:
   get: ^4.6.6
   permission_handler: ^11.2.1
   shared_preferences: ^2.0.0
-  modal_bottom_sheet: ^2.1.2
 
 dev_dependencies:
   flutter_test:

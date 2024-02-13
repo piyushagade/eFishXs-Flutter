@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:ffi';
 
@@ -28,20 +29,24 @@ class BLEController extends GetxController {
   List<int> buffer = [];
   late BluetoothCharacteristic? targetcharacteristic;
   late BluetoothService targetservice;
-  
-  late Timer timer;
   late StreamSubscription<List<ScanResult>> subscription;
+  late StreamSubscription<BluetoothDeviceState> statelistener;
+  late StreamSubscription<List<int>> datastreamlistener;
 
-  List<String> serialdataarray = ["test", "xcv"].obs;
+  RxList<String> serialdataarray = <String>[].obs;
   var lastserialline = "".obs;
-
   bool isScanning = false;
 
   @override
-  void dispose() {
-    // Cancel timer when widget is disposed
-    timer.cancel();
-    super.dispose();
+  void onInit() {
+    print('LOG: BLEController onInit');
+    super.onInit();
+  }
+
+  @override
+  void onReady() {
+    print('LOG: BLEController onReady');
+    super.onReady();
   }
 
   Future<void> scandevices() async {
@@ -63,20 +68,16 @@ class BLEController extends GetxController {
 
       isScanning = false;
 
-      // connecteddevice!.disconnect();
       // Listen to scan results
       subscription = ble.scanResults.listen((results) {
-        // Process scan results here
         // print("Found ${results.length} devices");
-
-        for (ScanResult result in results) {
-          // Add the device name to the list
-        }
+        // for (ScanResult result in results) {}
       });
 
       // Stop scanning after 10 seconds
       await Future.delayed(const Duration(seconds: 5));
       await ble.stopScan();
+      
       subscription.cancel();
     }
 
@@ -91,12 +92,9 @@ class BLEController extends GetxController {
     try {
       await device.connect();
       print("LOG: Device connected");
+      
       connecteddevice = device;
       connected = true;
-
-      Future.delayed(const Duration(milliseconds: 100), () {
-        Get.to(const HomePageWidget());
-      });
 
       // Get services
       List<BluetoothService> services = await device.discoverServices();
@@ -109,34 +107,39 @@ class BLEController extends GetxController {
         }
       }
 
+      if (targetcharacteristic != null) {
+        print("LOG: Valid GatorByte device detected.");
+        Future.delayed(const Duration(milliseconds: 100), () {
+          Get.to(() => const HomePageWidget());
+        });
+      }
+      else {
+        print("LOG: Not a valid GatorByte device.");
+      }
+
       // Read the value of the target characteristic
       if (targetservice != null && targetcharacteristic != null) {
         listenfordata();
-
-        // readdata();
-        // // Start periodic timer
-        // timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
-        //   readdata();
-        // });
       }
-
-      subscription.cancel();
 
       // Handle disconnections
       Future.delayed(const Duration(seconds: 1), () {
-        device.state.listen((event) {
-          if (event == BluetoothDeviceState.disconnected) {
+        statelistener = device.state.listen((event) {
+          print ("LOG: State: " + event.toString());
+          if (event == BluetoothDeviceState.disconnected || event == BluetoothDeviceState.disconnecting) {
             try {
+              statelistener.cancel();
               subscription.cancel();
+              datastreamlistener.cancel();
               onDisconnect();
+              print("LOG: Device disconnected.");
             }
             catch (e) {
-              print ("LOG: Error");
+              print ("LOGERR: Error disconnecting from device.");
               print (e);
             }
 
-            print("LOG: Device disconnected.");
-            Get.to(const DevicesPage());
+            Get.offAll(DevicesPage());
           }
         });
       });
@@ -153,7 +156,7 @@ class BLEController extends GetxController {
       await targetcharacteristic!.setNotifyValue(true);
 
       // Listen for notifications
-      targetcharacteristic!.value.listen((value) {
+      datastreamlistener = targetcharacteristic!.value.listen((value) {
         var data = String.fromCharCodes(value);
         serialdataarray.add(data);
       });
@@ -168,6 +171,7 @@ class BLEController extends GetxController {
       print('LOG: Disconnecting from device: ${connecteddevice.name}');
       await connecteddevice.disconnect();
       connected = false;
+
     } catch (e) {
       print('LOG: Error disconnecting from device: $e');
     }
@@ -187,4 +191,15 @@ class BLEController extends GetxController {
   }
 
   Stream<List<ScanResult>> get ScanResults => ble.scanResults;
+
+  // Write data to the characteristic
+  Future<void> senddata(String data) async {
+    try {
+      await targetcharacteristic?.write(utf8.encode(data));
+    }
+    catch (e) {
+      print("LOGERR: " + e.toString());
+    }
+    return;
+  }
 }

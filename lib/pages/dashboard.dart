@@ -1,3 +1,4 @@
+import 'package:efishxs/components/heading.dart';
 import 'package:efishxs/controllers/ble.dart';
 import 'package:efishxs/pages/devices.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,6 @@ class DashboardWidget extends StatefulWidget {
 }
 
 class _DashboardWidgetState extends State<DashboardWidget> {
-
   @override
   void initState() {
     super.initState();
@@ -21,61 +21,103 @@ class _DashboardWidgetState extends State<DashboardWidget> {
   @override
   Widget build(BuildContext context) {
     print("Showing dashboard");
-    final controller = Get.find<BLEController>(); // Get instance of BLEController
+    // final controller = Get.put(BLEController(
+    //   onDisconnect: () {},
+    // ));
+
+    final controller = Get.find<BLEController>();
 
     return Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.background,
-        body:  GetBuilder<BLEController>(
-        init: controller,
-        builder: (BLEController controller) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-
-              GestureDetector(
-                onTap: () {
-                  // Handle button tap
-                  controller.disconnectdevice();
-                },
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .surface, // Set background color to blue
-                      borderRadius:
-                          BorderRadius.circular(8), // Set rounded corners
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 4, horizontal: 12), // Add padding for spacing
-                    child: Row(
-                      mainAxisSize: MainAxisSize
-                          .min, // Allow the row to occupy minimum space
-                      children: [
-                        Icon(Icons.bluetooth_disabled,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .inversePrimary), // Refresh icon
-                        const SizedBox(
-                            width: 8), // Add some space between icon and label
-                        Text(
-                          "Disconnect",
-                          style: TextStyle(
-                              color:
-                                  Theme.of(context).colorScheme.inversePrimary,
-                              fontSize: 16), // Set label text style
-                        ),
-                      ],
-                    ),
+      backgroundColor: Theme.of(context).colorScheme.background,
+      body: Column(
+        children: [
+          HeadingWidget(
+            heading: "Dashboard",
+            subheading: "Read your device's sensors and add new data record.",
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.amber,
+              borderRadius: BorderRadius.circular(5),
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+            margin: const EdgeInsets.only(left: 25, right: 25, top: 10),
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Update available.",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    color: Color.fromARGB(255, 48, 48, 48),
                   ),
                 ),
-              )
-            ]
-          );
-        }
-      )
+              ],
+            ),
+          ),
+
+          
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: GridView(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
+              shrinkWrap: true, // Use shrinkWrap to adapt to the children size
+              physics:
+                  const NeverScrollableScrollPhysics(), // Disable scrolling of the grid
+              children: <Widget>[
+                Container(
+                  margin: const EdgeInsets.all(8),
+                  constraints: const BoxConstraints(maxWidth: 5, maxHeight: 5),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.inversePrimary,
+                    borderRadius: BorderRadius.circular(2)
+                  ),
+                  child: Center(
+                      child: Text(
+                    'Item 1',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  )),
+                ),
+                Container(
+                  margin: const EdgeInsets.all(8),
+                  constraints: const BoxConstraints(maxWidth: 5, maxHeight: 5),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.inversePrimary,
+                    borderRadius: BorderRadius.circular(2)
+                  ),
+                  child: Center(
+                      child: Text(
+                    'Item 2',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  )),
+                ),
+                SizedBox(
+                  width: 5,
+                  height: 5,
+                  child: Container(
+                    margin: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                      borderRadius: BorderRadius.circular(2)
+                    ),
+                    child: Center(
+                        child: Text(
+                      'Item 3',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    )),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
