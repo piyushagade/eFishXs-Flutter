@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:efishxs/components/homenavbar.dart';
 import 'package:efishxs/controllers/ble.dart';
 import 'package:efishxs/pages/dashboard.dart';
@@ -19,6 +21,7 @@ class HomePageWidget extends StatefulWidget {
 class _HomePageWidgetState extends State<HomePageWidget> {
 
   int _selectedtabindex = 0;
+  bool _bl_connection_status = true;
 
   void navigatebottombar (int index) {
     setState(() {
@@ -32,6 +35,20 @@ class _HomePageWidgetState extends State<HomePageWidget> {
   void initState() {
     super.initState();
   }
+  
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+  
+
+  // Timer.periodic(const Duration(seconds:  2), (Timer t) {
+  //   setState(() {
+  //     _bl_connection_status = controller.isconnected();
+  //   });
+  //   print("LOG: Checking connection status: " + _bl_connection_status.toString());
+  // });
 
   @override
   Widget build(BuildContext context) {
@@ -40,32 +57,81 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     ));
 
     return Scaffold(
-      bottomNavigationBar: BottomNavBar(
-        onTabChange: (index) {
-          navigatebottombar(index);
-        },
+
+      // Bottom navigation bar
+      bottomNavigationBar: IgnorePointer(
+        ignoring: !controller.connected.value,
+        child: Obx(() => Opacity(
+            opacity: controller.connected.value ? 1 : 0.2,
+            child: BottomNavBar(
+              onTabChange: (index) {
+                navigatebottombar(index);
+              }
+            ),
+          ),
+        ),
       ),
+
       backgroundColor: Theme.of(context).colorScheme.background,
+      
+      // Appbar
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
-        leadingWidth: MediaQuery.of(context).size.width, // Set leadingWidth to full width
+        leadingWidth:
+            MediaQuery.of(context).size.width, // Set leadingWidth to full width
         leading: Center(
           child: Image.asset("assets/images/cereal.png", height: 40),
         ),
         actions: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(2, 0, 8, 0),
-              child: IconButton(
-                icon: const Icon(Icons.bluetooth_disabled),
-                onPressed: () {
-                  controller.disconnectdevice();
-                },
-              ),
-            ),
-          ],
+          Obx(() => Padding(
+                padding: const EdgeInsets.fromLTRB(2, 0, 8, 0),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 6,
+                      backgroundColor: controller.connected.value
+                          ? const Color.fromARGB(255, 40, 119, 255)
+                          : Colors.amber,
+                    ),
+                    IconButton(
+                      icon: controller.connected.value
+                          ? const Icon(Icons.bluetooth_disabled)
+                          : const Icon(Icons.bluetooth),
+                      onPressed: () {
+                        if (controller.connected.value) {
+                          print("LOG: Request to disconnect device");
+                          controller.disconnectdevice();
+                        } else {
+                          print("LOG: Request to connect device");
+                          controller.connectdevice(
+                              context, controller.connecteddevice);
+                        }
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.devices_rounded),
+                      onPressed: () {
+                        controller.disconnectdevice();
+                        Get.off(() => DevicesPage());
+                      },
+                    ),
+                  ],
+                ),
+              )),
+        ],
       ),
-      body: _pages[_selectedtabindex],
+
+      
+      // Body
+      body: Obx(() => IgnorePointer(
+        ignoring: !controller.connected.value,
+          child: Opacity(
+            opacity: controller.connected.value ? 1 : 0.2,
+            child: _pages[_selectedtabindex],
+          ),
+        ),
+      ),
     );
   }
 }

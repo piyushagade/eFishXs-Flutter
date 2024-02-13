@@ -28,7 +28,6 @@ class DevicesPage extends StatelessWidget {
     // Start scanning for devices
     controller.scandevices();
 
-
     return Scaffold(
       appBar: AppBar(
         elevation: 0,

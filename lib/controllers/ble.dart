@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
-import 'dart:ffi';
 
 import 'package:efishxs/pages/devices.dart';
 import 'package:efishxs/pages/home.dart';
 import 'package:efishxs/pages/serialmonitor.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -14,7 +13,7 @@ import 'package:permission_handler/permission_handler.dart';
 class BLEController extends GetxController {
   FlutterBlue ble = FlutterBlue.instance;
   late BluetoothDevice connecteddevice;
-  bool connected = false;
+  RxBool connected = false.obs;
 
   late SerialMonitorPage serialMonitorPage;
 
@@ -90,11 +89,36 @@ class BLEController extends GetxController {
     print('LOG: Connecting to device: ${device.name}');
 
     try {
+      await connecteddevice!.disconnect();
+    }
+    catch (e) {
+      print(e);
+    }
+
+    try {
+      final timer = Timer(const Duration(seconds: 5), () async {
+        Get.snackbar(
+          "Bluetooth error",
+          "We couldn't establish a connection. Likely, the device is not powered on.",
+          animationDuration: const Duration(milliseconds: 200),
+          borderRadius: 2,
+          icon: const Icon(Icons.bluetooth_disabled),
+          snackPosition: SnackPosition.BOTTOM,
+          duration: const Duration(seconds: 5),
+          mainButton: TextButton(onPressed: () {}, child: const Text("Okay")),
+        );
+
+        // Prevent autoconnection
+        device.disconnect();
+      });
+      
       await device.connect();
-      print("LOG: Device connected");
+      timer.cancel();
       
       connecteddevice = device;
-      connected = true;
+      connected.value = true;
+
+      print("LOG: Device connected");
 
       // Get services
       List<BluetoothService> services = await device.discoverServices();
@@ -132,6 +156,7 @@ class BLEController extends GetxController {
               subscription.cancel();
               datastreamlistener.cancel();
               onDisconnect();
+              connected.value = false;
               print("LOG: Device disconnected.");
             }
             catch (e) {
@@ -139,18 +164,21 @@ class BLEController extends GetxController {
               print (e);
             }
 
-            Get.offAll(DevicesPage());
+            // // Show devices page
+            // Get.offAll(DevicesPage());
           }
         });
       });
     } catch (e) {
       // Handle connection errors
-      print('Error: $e');
+      print('LOGERR: Error: $e');
     }
   }
 
   Future<void> listenfordata() async {
     try {
+
+      print("LOG: Enabling data stream listener");
 
       // Enable notifications for this characteristic
       await targetcharacteristic!.setNotifyValue(true);
@@ -158,6 +186,7 @@ class BLEController extends GetxController {
       // Listen for notifications
       datastreamlistener = targetcharacteristic!.value.listen((value) {
         var data = String.fromCharCodes(value);
+        print("LOG: New data: " + data);
         serialdataarray.add(data);
       });
     } catch (e) {
@@ -170,7 +199,7 @@ class BLEController extends GetxController {
     try {
       print('LOG: Disconnecting from device: ${connecteddevice.name}');
       await connecteddevice.disconnect();
-      connected = false;
+      connected.value = false;
 
     } catch (e) {
       print('LOG: Error disconnecting from device: $e');
@@ -178,7 +207,7 @@ class BLEController extends GetxController {
   }
 
   bool isconnected () {
-    return connected;
+    return connected.value;
   }
 
   void disconnectalldevices() async {
