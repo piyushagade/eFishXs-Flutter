@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class BLEController extends GetxController {
@@ -33,19 +34,62 @@ class BLEController extends GetxController {
   late StreamSubscription<List<int>> datastreamlistener;
 
   RxList<String> serialdataarray = <String>[].obs;
+  RxList<Widget> serialdatawidgetarray = <Widget>[].obs;
   var lastserialline = "".obs;
   bool isScanning = false;
+
+  
+  RxBool isOn = true.obs;
+  RxBool isAvailable = true.obs;
 
   @override
   void onInit() {
     print('LOG: BLEController onInit');
+    isBluetoothAvailable();
     super.onInit();
+
+    // Handle bluetooth events
+    Future.delayed(const Duration(seconds: 1), () {
+      ble.state.listen((event) async {
+        print ("LOG: State: " + event.toString());
+
+        if (event == BluetoothState.on) {
+          print('LOG: Bluetooth turned ON');
+          isBluetoothOn();
+          
+          // Update the devices list
+          await Future.delayed(const Duration(seconds: 2), () {
+            scandevices();
+          });
+
+        } else if (event == BluetoothState.off) {
+          print('LOG: Bluetooth turned OFF');
+          isBluetoothOn();
+          
+          await Future.delayed(const Duration(seconds: 2), () {
+            scandevices();
+          });
+        }
+      });
+    });
   }
 
   @override
   void onReady() {
     print('LOG: BLEController onReady');
     super.onReady();
+  }
+
+  Future<bool> isBluetoothOn() async {
+    isOn.value = await ble.isOn;
+    print("LOG: Bluetooth is " + (isOn.value ? "ON" : "OFF"));
+    return isOn.value;
+  }
+
+  Future<bool> isBluetoothAvailable() async {
+    isAvailable.value = await ble.isAvailable;
+    print("LOG: Bluetooth " + (isOn.value ? "is" : "is not") + " available");
+    return isAvailable.value;
   }
 
   Future<void> scandevices() async {
@@ -161,13 +205,13 @@ class BLEController extends GetxController {
           listenfordata();
         }
 
-        // Handle disconnections
+        // Handle device events
         Future.delayed(const Duration(seconds: 1), () {
           statelistener = device.state.listen((event) async {
             print ("LOG: State: " + event.toString());
-            if (event == BluetoothDeviceState.disconnected || event == BluetoothDeviceState.disconnecting) {
-              
 
+            // Handle disconnections
+            if (event == BluetoothDeviceState.disconnected || event == BluetoothDeviceState.disconnecting) {
               try {
                 print('LOG: Disconnecting from device: ${connecteddevice.name}');
                 await connecteddevice.disconnect();
@@ -229,6 +273,35 @@ class BLEController extends GetxController {
         var data = String.fromCharCodes(value);
         print("LOG: New data: " + data);
         serialdataarray.add(data);
+
+        serialdatawidgetarray.add(
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 2.0, 0, 0),
+                  child: Text(
+                    DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.now()),
+                    style: const TextStyle(
+                      color: Color.fromARGB(255, 203, 203, 203),
+                      fontSize: 10,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  data.trimRight(),
+                  style: const TextStyle(
+                    color: Color.fromARGB(255, 23, 167, 28),
+                    fontSize: 13,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
       });
     } catch (e) {
       // Handle errors
