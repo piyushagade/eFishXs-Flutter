@@ -139,16 +139,16 @@ class DevicesPage extends StatelessWidget {
                                     String deviceType = "unknown";
                                     if (deviceTypeEnum ==
                                         BluetoothDeviceType.unknown) {
-                                      deviceType = "unknown";
+                                      deviceType = "Unknown";
                                     } else if (deviceTypeEnum ==
                                         BluetoothDeviceType.classic) {
-                                      deviceType = "classic";
+                                      deviceType = "Classic";
                                     } else if (deviceTypeEnum ==
                                         BluetoothDeviceType.le) {
-                                      deviceType = "le";
+                                      deviceType = "LE";
                                     } else if (deviceTypeEnum ==
                                         BluetoothDeviceType.dual) {
-                                      deviceType = "dual";
+                                      deviceType = "Dual";
                                     }
                                       
                                     return GestureDetector(
@@ -296,12 +296,31 @@ class DevicesPage extends StatelessWidget {
                                             ListTile(
                                               leading: const Icon(Icons.bluetooth),
                                               title: Text(deviceName),
-                                              subtitle: Text("$deviceType/$deviceId",
-                                                  style: TextStyle(
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .secondary,
-                                                      fontSize: 14)),
+                                              subtitle: Row(
+                                                children: [
+                                                  Opacity(
+                                                    opacity: 0.4,
+                                                    child: Text(deviceId,
+                                                        style: TextStyle(
+                                                            color: Theme.of(context)
+                                                                .colorScheme
+                                                                .inversePrimary,
+                                                            fontSize: 14)),
+                                                  ),
+                                                  const Spacer(),
+                                                  Opacity(
+                                                    opacity: 0.8,
+                                                    child: Text(deviceType,
+                                                      style: const TextStyle(
+                                                        color: Color.fromARGB(255, 63, 140, 255),
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  
+                                                ],
+                                              ),
                                             ),
                                           ],
                                         ),

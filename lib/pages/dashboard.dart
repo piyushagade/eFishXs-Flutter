@@ -65,27 +65,33 @@ class _DashboardWidgetState extends State<DashboardWidget> {
               shrinkWrap: true, // Use shrinkWrap to adapt to the children size
               physics:
                   const NeverScrollableScrollPhysics(), // Disable scrolling of the grid
-              children: const <Widget>[
+              children: const [
+                
                 BigButtonItem(
                   label: "Add record",
                   icon: Icons.add,
                 ),
+          
                 BigButtonItem(
                   label: "Read sensors",
                   icon: Icons.device_thermostat_sharp,
                 ),
+          
                 BigButtonItem(
                   label: "Data",
                   icon: Icons.bar_chart,
                 ),
+          
                 BigButtonItem(
                   label: "Diagnose",
                   icon: Icons.troubleshoot,
                 ),
+          
                 BigButtonItem(
                   label: "Calibrate",
                   icon: Icons.local_convenience_store_outlined,
                 ),
+          
               ],
             ),
           ),

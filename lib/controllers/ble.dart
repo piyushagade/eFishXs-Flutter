@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:efishxs/components/serialmonitoritem.dart';
+import 'package:efishxs/components/serialmonitortimeitem.dart';
 import 'package:efishxs/pages/devices.dart';
 import 'package:efishxs/pages/home.dart';
 import 'package:efishxs/pages/serialmonitor.dart';
@@ -35,13 +36,14 @@ class BLEController extends GetxController {
   late StreamSubscription<List<int>> datastreamlistener;
 
   RxList<String> serialdataarray = <String>[].obs;
+  RxList<Widget> serialtimewidgetarray = <Widget>[].obs;
   RxList<Widget> serialdatawidgetarray = <Widget>[].obs;
   var lastserialline = "".obs;
   bool isScanning = false;
 
-  
   RxBool isOn = true.obs;
   RxBool isAvailable = true.obs;
+  RxBool showTimestamp = true.obs;
 
   @override
   void onInit() {
@@ -62,7 +64,8 @@ class BLEController extends GetxController {
             scandevices();
           });
 
-          serialdatawidgetarray.add(const SerialMonitorItem(
+          serialtimewidgetarray.add(SerialMonitorTimeItem());
+          serialdatawidgetarray.add(SerialMonitorItem(
               data: "Bluetooth turned ON",
               type: "status",
             ),
@@ -76,7 +79,8 @@ class BLEController extends GetxController {
             scandevices();
           });
           
-          serialdatawidgetarray.add(const SerialMonitorItem(
+          serialtimewidgetarray.add(SerialMonitorTimeItem());
+          serialdatawidgetarray.add(SerialMonitorItem(
               data: "Bluetooth turned OFF",
               type: "status",
             ),
@@ -190,7 +194,8 @@ class BLEController extends GetxController {
         
       connecteddevice = device;
       connected.value = true;
-      serialdatawidgetarray.add(const SerialMonitorItem(
+      serialtimewidgetarray.add(SerialMonitorTimeItem());
+      serialdatawidgetarray.add(SerialMonitorItem(
           data: "Device connected",
           type: "status",
         ),
@@ -234,7 +239,8 @@ class BLEController extends GetxController {
                 await connecteddevice.disconnect();
                 connected.value = false;
 
-                serialdatawidgetarray.add(const SerialMonitorItem(
+                serialtimewidgetarray.add(SerialMonitorTimeItem());
+                serialdatawidgetarray.add(SerialMonitorItem(
                   data: "Device disconnected",
                   type: "status",
                 ),
@@ -297,6 +303,7 @@ class BLEController extends GetxController {
         print("LOG: New data: " + data);
         serialdataarray.add(data);
 
+        serialtimewidgetarray.add(SerialMonitorTimeItem());
         serialdatawidgetarray.add(SerialMonitorItem(
             data: data.trimRight(),
             type: "incoming",

@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 class HeadingWidget extends StatelessWidget {
   String heading = "";
   String subheading = "";
+  double marginBottom = 0;
 
-  HeadingWidget({super.key, required this.heading, required this.subheading});
+  HeadingWidget({super.key, required this.heading, required this.subheading, this.marginBottom = 12});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +33,7 @@ class HeadingWidget extends StatelessWidget {
               color: Theme.of(context).colorScheme.surface,
             ),
           ),
-          SizedBox(height: 12,),
+          SizedBox(height: marginBottom,),
         ],
       ),
     );

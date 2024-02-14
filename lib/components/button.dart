@@ -5,7 +5,21 @@ class ButtonWidget extends StatefulWidget {
   void Function()? onTap;
   String label = "Unlabled";
   IconData icon = Icons.refresh;
-  ButtonWidget({super.key, required this.label, required this.icon, required this.onTap});
+  Color backgroundColor;
+  Color color;
+  EdgeInsets padding;
+  double scale;
+  
+  ButtonWidget(
+    {super.key,
+    required this.label,
+    required this.icon,
+    required this.onTap,
+    this.backgroundColor = const Color.fromARGB(255, 241, 241, 241),
+    this.color = const Color.fromARGB(255, 62, 62, 62),
+    this.padding = const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+    this.scale = 1,
+  });
 
   @override
   State<ButtonWidget> createState() => _ButtonWidgetState();
@@ -23,36 +37,34 @@ class _ButtonWidgetState extends State<ButtonWidget> {
           changebutton = true;
         });
         widget.onTap!();
-        HapticFeedback.mediumImpact();
       },
       child: Opacity(
         opacity: 1,
-        child: AnimatedContainer(
-          duration: const Duration(seconds: 1),
-          decoration: BoxDecoration(
-            color: Theme.of(context)
-                .colorScheme
-                .surface, // Set background color to blue
-            borderRadius: BorderRadius.circular(2), // Set rounded corners
-          ),
-          padding: const EdgeInsets.symmetric(
-              vertical: 4, horizontal: 12), // Add padding for spacing
-          child: Row(
-            mainAxisSize:
-                MainAxisSize.min, // Allow the row to occupy minimum space
-            children: [
-              Icon(widget.icon,
-                  color: Theme.of(context)
-                      .colorScheme
-                      .inversePrimary), // Refresh icon
-              const SizedBox(width: 8), // Add some space between icon and label
-              Text(
-                widget.label,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.inversePrimary,
-                    fontSize: 16), // Set label text style
-              ),
-            ],
+        child: Transform.scale(
+          scale: widget.scale,
+          child: AnimatedContainer(
+            duration: const Duration(seconds: 1),
+            decoration: BoxDecoration(
+              color: widget.backgroundColor, // Set background color to blue
+              borderRadius: BorderRadius.circular(2), // Set rounded corners
+            ),
+            padding: widget.padding, // Add padding for spacing
+            child: Row(
+              mainAxisSize: MainAxisSize.min, // Allow the row to occupy minimum space
+              children: [
+                Icon(widget.icon,
+                  color: widget.color,
+                ), // Refresh icon
+                SizedBox(width: widget.label.isNotEmpty ? 8 : 0), // Add some space between icon and label
+                Text(
+                  widget.label,
+                  style: TextStyle(
+                      color: widget.color,
+                      fontSize: 16,
+                    ), // Set label text style
+                ),
+              ],
+            ),
           ),
         ),
       ),
