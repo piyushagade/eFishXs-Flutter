@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:efishxs/components/serialmonitoritem.dart';
 import 'package:efishxs/pages/devices.dart';
 import 'package:efishxs/pages/home.dart';
 import 'package:efishxs/pages/serialmonitor.dart';
@@ -51,7 +52,6 @@ class BLEController extends GetxController {
     // Handle bluetooth events
     Future.delayed(const Duration(seconds: 1), () {
       ble.state.listen((event) async {
-        print ("LOG: State: " + event.toString());
 
         if (event == BluetoothState.on) {
           print('LOG: Bluetooth turned ON');
@@ -62,6 +62,12 @@ class BLEController extends GetxController {
             scandevices();
           });
 
+          serialdatawidgetarray.add(const SerialMonitorItem(
+              data: "Bluetooth turned ON",
+              type: "status",
+            ),
+          );
+
         } else if (event == BluetoothState.off) {
           print('LOG: Bluetooth turned OFF');
           isBluetoothOn();
@@ -69,6 +75,12 @@ class BLEController extends GetxController {
           await Future.delayed(const Duration(seconds: 2), () {
             scandevices();
           });
+          
+          serialdatawidgetarray.add(const SerialMonitorItem(
+              data: "Bluetooth turned OFF",
+              type: "status",
+            ),
+          );
         }
       });
     });
@@ -178,6 +190,11 @@ class BLEController extends GetxController {
         
       connecteddevice = device;
       connected.value = true;
+      serialdatawidgetarray.add(const SerialMonitorItem(
+          data: "Device connected",
+          type: "status",
+        ),
+      );
 
         // Get services
         List<BluetoothService> services = await device.discoverServices();
@@ -216,6 +233,12 @@ class BLEController extends GetxController {
                 print('LOG: Disconnecting from device: ${connecteddevice.name}');
                 await connecteddevice.disconnect();
                 connected.value = false;
+
+                serialdatawidgetarray.add(const SerialMonitorItem(
+                  data: "Device disconnected",
+                  type: "status",
+                ),
+              );
 
               } catch (e) {
                 print('LOG: Error disconnecting from device: $e');
@@ -274,32 +297,9 @@ class BLEController extends GetxController {
         print("LOG: New data: " + data);
         serialdataarray.add(data);
 
-        serialdatawidgetarray.add(
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 2.0, 0, 0),
-                  child: Text(
-                    DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.now()),
-                    style: const TextStyle(
-                      color: Color.fromARGB(255, 203, 203, 203),
-                      fontSize: 10,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  data.trimRight(),
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 23, 167, 28),
-                    fontSize: 13,
-                  ),
-                ),
-              ],
-            ),
+        serialdatawidgetarray.add(SerialMonitorItem(
+            data: data.trimRight(),
+            type: "incoming",
           ),
         );
       });

@@ -1,5 +1,6 @@
 import 'package:efishxs/components/button.dart';
 import 'package:efishxs/components/heading.dart';
+import 'package:efishxs/components/serialmonitoritem.dart';
 import 'package:efishxs/controllers/ble.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,6 +14,15 @@ class SerialMonitorPage extends StatelessWidget {
   final controller = Get.find<BLEController>();
   bool showtimestamp = true;
 
+  void sendcommand(String command) {
+    controller.senddata(command);
+
+    controller.serialdatawidgetarray.add(SerialMonitorItem(
+      data: command,
+      type: "outgoing",
+    ));
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,18 +66,17 @@ class SerialMonitorPage extends StatelessWidget {
                       label: "Ping",
                       icon: Icons.refresh,
                       onTap: () {
-                        controller.senddata("ping");
+                        String command = "ping";
+                        sendcommand(command);
 
-                        controller.serialdataarray.add("< ping\n");
                       }),
                   const SizedBox(width: 16),
                   ButtonWidget(
                       label: "Help",
                       icon: Icons.refresh,
                       onTap: () {
-                        controller.senddata("help");
-
-                        controller.serialdataarray.add("< help\n");
+                        String command = "help";
+                        sendcommand(command);
                       }),
                   const SizedBox(width: 16),
                   ButtonWidget(label: "Add", icon: Icons.add, onTap: () {}),
