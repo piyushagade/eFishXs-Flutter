@@ -9,8 +9,8 @@ class SerialMonitorItem extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
-    Color color = type == "incoming" ? const Color.fromARGB(255, 23, 167, 28) : 
-        type == "outgoing" ? const Color.fromARGB(255, 180, 45, 180) : Color.fromARGB(255, 194, 169, 7);
+    Color color = type == "incoming" ? Color.fromARGB(255, 31, 212, 37) : 
+        type == "outgoing" ? Color.fromARGB(255, 194, 30, 139) : Color.fromARGB(255, 223, 195, 13);
 
     return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),

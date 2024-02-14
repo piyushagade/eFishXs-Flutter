@@ -53,7 +53,7 @@ class BLEController extends GetxController {
     Future.delayed(const Duration(seconds: 1), () {
       ble.state.listen((event) async {
 
-        if (event == BluetoothState.on) {
+        if (event == BluetoothState.turningOn) {
           print('LOG: Bluetooth turned ON');
           isBluetoothOn();
           
@@ -68,7 +68,7 @@ class BLEController extends GetxController {
             ),
           );
 
-        } else if (event == BluetoothState.off) {
+        } else if (event == BluetoothState.turningOff) {
           print('LOG: Bluetooth turned OFF');
           isBluetoothOn();
           

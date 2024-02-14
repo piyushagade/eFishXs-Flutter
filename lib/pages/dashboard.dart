@@ -1,3 +1,4 @@
+import 'package:efishxs/components/bigbuttonitem.dart';
 import 'package:efishxs/components/heading.dart';
 import 'package:efishxs/controllers/ble.dart';
 import 'package:efishxs/pages/devices.dart';
@@ -38,7 +39,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
           Container(
             decoration: BoxDecoration(
               color: Colors.amber,
-              borderRadius: BorderRadius.circular(5),
+              borderRadius: BorderRadius.circular(2),
             ),
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
             margin: const EdgeInsets.only(left: 25, right: 25, top: 10),
@@ -64,54 +65,26 @@ class _DashboardWidgetState extends State<DashboardWidget> {
               shrinkWrap: true, // Use shrinkWrap to adapt to the children size
               physics:
                   const NeverScrollableScrollPhysics(), // Disable scrolling of the grid
-              children: <Widget>[
-                Container(
-                  margin: const EdgeInsets.all(8),
-                  constraints: const BoxConstraints(maxWidth: 5, maxHeight: 5),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.inversePrimary,
-                    borderRadius: BorderRadius.circular(2)
-                  ),
-                  child: Center(
-                      child: Text(
-                    'Item 1',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  )),
+              children: const <Widget>[
+                BigButtonItem(
+                  label: "Add record",
+                  icon: Icons.add,
                 ),
-                Container(
-                  margin: const EdgeInsets.all(8),
-                  constraints: const BoxConstraints(maxWidth: 5, maxHeight: 5),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.inversePrimary,
-                    borderRadius: BorderRadius.circular(2)
-                  ),
-                  child: Center(
-                      child: Text(
-                    'Item 2',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  )),
+                BigButtonItem(
+                  label: "Read sensors",
+                  icon: Icons.device_thermostat_sharp,
                 ),
-                SizedBox(
-                  width: 5,
-                  height: 5,
-                  child: Container(
-                    margin: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.inversePrimary,
-                      borderRadius: BorderRadius.circular(2)
-                    ),
-                    child: Center(
-                        child: Text(
-                      'Item 3',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    )),
-                  ),
+                BigButtonItem(
+                  label: "Data",
+                  icon: Icons.bar_chart,
+                ),
+                BigButtonItem(
+                  label: "Diagnose",
+                  icon: Icons.troubleshoot,
+                ),
+                BigButtonItem(
+                  label: "Calibrate",
+                  icon: Icons.local_convenience_store_outlined,
                 ),
               ],
             ),
