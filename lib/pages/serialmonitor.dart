@@ -3,6 +3,7 @@ import 'package:efishxs/components/ui/heading.dart';
 import 'package:efishxs/components/listitems/serialmonitoritem.dart';
 import 'package:efishxs/components/listitems/serialmonitortimeitem.dart';
 import 'package:efishxs/controllers/ble.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -18,6 +19,7 @@ class _SerialMonitorPageState extends State<SerialMonitorPage> {
   final controller = Get.find<BLEController>();
   SharedPreferences? _prefs;
   late Future<void> _prefsFuture;
+  final ScrollController _scrollController = ScrollController();
 
   bool showtimestamp = true;
 
@@ -42,7 +44,31 @@ class _SerialMonitorPageState extends State<SerialMonitorPage> {
   }
 
   @override
+  void dispose() {
+    _scrollController.dispose(); // Dispose the ScrollController to avoid memory leaks
+    super.dispose();
+  }
+
+  void scrollToBottom() {
+    try {
+      _scrollController.animateTo(
+        _scrollController.position.minScrollExtent,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+      );
+    }
+    catch (e) {}
+  }
+
+  void keepScrollPosition() {
+    try {
+    }
+    catch (e) {}
+  }
+
+  @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: Container(
         child: Column(
@@ -121,33 +147,48 @@ class _SerialMonitorPageState extends State<SerialMonitorPage> {
                   borderRadius: BorderRadius.circular(2),
                 ),
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-                child: Obx(
-                  () => SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    reverse: true,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                      child: Row(
-                        children: [
-                          Visibility(
-                            visible: controller.showTimestamp.value,
-                            child: Container(
-                              child: Column(
-                                children: controller.serialtimewidgetarray.value,
+                child: Obx(() {
+                    
+                    // Scroll to bottom
+                    if (_prefs?.getBool("settings/serialmonitor/autoscroll") ?? true) {
+                      scrollToBottom();
+                    }
+                    else {
+                      keepScrollPosition();
+                    }
+
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      physics: const ClampingScrollPhysics(),
+                      dragStartBehavior: DragStartBehavior.start,
+                      controller: _scrollController,
+                      reverse: true,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                        child: Row(
+                          children: [
+                            Visibility(
+                              visible: controller.showTimestamp.value,
+                              child: Container(
+                                child: Column(
+                                  children: controller.serialtimewidgetarray.value,
+                                ),
                               ),
                             ),
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: controller.serialdatawidgetarray.value,
-                          ),
-                        ],
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: controller.serialdatawidgetarray.value,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
               ),
             ),
+
+            // Bottom action buttons
             const SizedBox(height: 16),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,

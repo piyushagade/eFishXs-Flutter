@@ -89,6 +89,14 @@ class _SettingsPageState extends State<SettingsPage> {
                     await _prefs?.setBool("settings/serialmonitor/autoconnect", newvalue);
                   },
                 ),
+                
+                SettingsSwitchItem(
+                  label: "Auto scroll",
+                  value: _prefs?.getBool("settings/serialmonitor/autoscroll") ?? true,
+                  onChanged: (bool newvalue) async {
+                    await _prefs?.setBool("settings/serialmonitor/autoscroll", newvalue);
+                  },
+                ),
         
                 SettingsDropdownWidget(
                   label: "New line character",

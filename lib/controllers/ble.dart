@@ -12,6 +12,7 @@ import 'package:get/get.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class BLEController extends GetxController {
   FlutterBlue ble = FlutterBlue.instance;
@@ -47,12 +48,19 @@ class BLEController extends GetxController {
   RxBool isOn = true.obs;
   RxBool isAvailable = true.obs;
   RxBool showTimestamp = true.obs;
+  
+  SharedPreferences? _prefs;
+  late Future<void> _prefsFuture;
 
   @override
   void onInit() {
     print('LOG: BLEController onInit');
     isBluetoothAvailable();
     super.onInit();
+    
+    _prefsFuture = SharedPreferences.getInstance().then((value) {
+      _prefs = value; 
+    });
 
     // Handle bluetooth events
     Future.delayed(const Duration(seconds: 1), () {
@@ -160,7 +168,7 @@ class BLEController extends GetxController {
     isConnecting.value = true;
     print('LOG: Connecting to device: ${device.name}');
 
-    var connectingsnackbar = Get.snackbar(
+     var connectingsnackbar = Get.snackbar(
       "Connecting to your device",
       "Please wait while we establish a connection.",
       animationDuration: const Duration(milliseconds: 200),
@@ -333,17 +341,26 @@ class BLEController extends GetxController {
       await targetcharacteristic!.setNotifyValue(true);
 
       // Listen for notifications
+      String stringbuffer = "";
       datastreamlistener = targetcharacteristic!.value.listen((value) {
         var data = String.fromCharCodes(value);
-        print("LOG: New data: " + data);
-        serialdataarray.add(data);
+        var lineendingchar = ["\r\n", "\r", "\n"][_prefs?.getInt("settings/serialmonitor/lineending") ?? 0];
 
-        serialtimewidgetarray.add(SerialMonitorTimeItem());
-        serialdatawidgetarray.add(SerialMonitorItem(
-            data: data.trimRight(),
-            type: "incoming",
-          ),
-        );
+        // Wait for EOL character
+        stringbuffer += data;
+        if (data.endsWith(lineendingchar)) {
+          serialdataarray.add(stringbuffer);
+
+          serialtimewidgetarray.add(SerialMonitorTimeItem());
+          serialdatawidgetarray.add(SerialMonitorItem(
+              data: stringbuffer.trimRight(),
+              type: "incoming",
+            ),
+          );
+
+          // Reset buffer
+          stringbuffer = "";
+        }
       });
     } catch (e) {
       // Handle errors
