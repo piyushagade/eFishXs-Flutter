@@ -1,7 +1,7 @@
-import 'package:efishxs/components/button.dart';
-import 'package:efishxs/components/heading.dart';
-import 'package:efishxs/components/serialmonitoritem.dart';
-import 'package:efishxs/components/serialmonitortimeitem.dart';
+import 'package:efishxs/components/buttons/button.dart';
+import 'package:efishxs/components/ui/heading.dart';
+import 'package:efishxs/components/listitems/serialmonitoritem.dart';
+import 'package:efishxs/components/listitems/serialmonitortimeitem.dart';
 import 'package:efishxs/controllers/ble.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -44,17 +44,18 @@ class SerialMonitorPage extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Row(
                 children: [
-                  const Spacer(),
               
                   ButtonWidget(
                       label: "",
                       icon: Icons.share_rounded,
-                          backgroundColor: Color.fromARGB(255, 200, 200, 200),
+                          backgroundColor: const Color.fromARGB(255, 200, 200, 200),
                           padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 4),
                           scale: 0.8,
                       onTap: () {
                     },
                   ),
+                  
+                  const Spacer(),
               
                   const SizedBox(width: 8,),
                   
@@ -63,7 +64,7 @@ class SerialMonitorPage extends StatelessWidget {
                       child: ButtonWidget(
                           label: "",
                           icon: Icons.timer_rounded, 
-                          backgroundColor: Color.fromARGB(255, 200, 200, 200),
+                          backgroundColor: const Color.fromARGB(255, 200, 200, 200),
                           padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
                           scale: 0.8,
                           onTap: () {
@@ -82,7 +83,9 @@ class SerialMonitorPage extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 4),
                           scale: 0.8,
                       onTap: () {
+                        controller.serialtimewidgetarray.value = [];
                         controller.serialdatawidgetarray.value = [];
+                        controller.serialtimewidgetarray.add(SerialMonitorTimeItem());
                         controller.serialdatawidgetarray.add(SerialMonitorItem(
                             data: "Monitor cleared", type: "status"));
                       }),

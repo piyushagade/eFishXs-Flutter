@@ -17,7 +17,7 @@ class ButtonWidget extends StatefulWidget {
     required this.onTap,
     this.backgroundColor = const Color.fromARGB(255, 241, 241, 241),
     this.color = const Color.fromARGB(255, 62, 62, 62),
-    this.padding = const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+    this.padding = const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
     this.scale = 1,
   });
 
@@ -55,7 +55,7 @@ class _ButtonWidgetState extends State<ButtonWidget> {
                 Icon(widget.icon,
                   color: widget.color,
                 ), // Refresh icon
-                SizedBox(width: widget.label.isNotEmpty ? 8 : 0), // Add some space between icon and label
+                SizedBox(width: widget.label.isNotEmpty ? 4 : 0), // Add some space between icon and label
                 Text(
                   widget.label,
                   style: TextStyle(

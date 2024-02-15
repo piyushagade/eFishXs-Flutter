@@ -1,5 +1,5 @@
-import 'package:efishxs/components/button.dart';
-import 'package:efishxs/components/heading.dart';
+import 'package:efishxs/components/buttons/button.dart';
+import 'package:efishxs/components/ui/heading.dart';
 import 'package:efishxs/controllers/ble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';

@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:efishxs/components/serialmonitoritem.dart';
-import 'package:efishxs/components/serialmonitortimeitem.dart';
+import 'package:efishxs/components/listitems/serialmonitoritem.dart';
+import 'package:efishxs/components/listitems/serialmonitortimeitem.dart';
 import 'package:efishxs/pages/devices.dart';
 import 'package:efishxs/pages/home.dart';
 import 'package:efishxs/pages/serialmonitor.dart';

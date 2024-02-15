@@ -1,4 +1,5 @@
-import 'package:efishxs/components/heading.dart';
+import 'package:efishxs/components/ui/heading.dart';
+import 'package:efishxs/components/ui/subheading.dart';
 import 'package:efishxs/theme/themeprovider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,14 +11,14 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     
-    print("Showing settings");
-
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       body: Column(
         children: [
           
           HeadingWidget(heading: "Preferences", subheading: "Customize your experience and app configurations."),
+
+          SubheadingWidget(heading: "General settings", subheading: "Basic application behavior and appearance settings",),
 
           Container(
             decoration: BoxDecoration(

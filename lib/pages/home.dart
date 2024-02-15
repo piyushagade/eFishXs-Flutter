@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:efishxs/components/homenavbar.dart';
+import 'package:efishxs/components/ui/homenavbar.dart';
 import 'package:efishxs/controllers/ble.dart';
 import 'package:efishxs/pages/dashboard.dart';
 import 'package:efishxs/pages/devices.dart';

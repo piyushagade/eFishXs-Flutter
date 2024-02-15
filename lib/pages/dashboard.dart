@@ -1,5 +1,5 @@
-import 'package:efishxs/components/bigbuttonitem.dart';
-import 'package:efishxs/components/heading.dart';
+import 'package:efishxs/components/buttons/bigbuttonitem.dart';
+import 'package:efishxs/components/ui/heading.dart';
 import 'package:efishxs/controllers/ble.dart';
 import 'package:efishxs/pages/devices.dart';
 import 'package:flutter/material.dart';

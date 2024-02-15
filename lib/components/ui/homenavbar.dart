@@ -25,7 +25,6 @@ class BottomNavBar extends StatelessWidget {
           GButton(icon: Icons.area_chart, text: "Dashboard",),
           GButton(icon: Icons.code, text: "Monitor",),
           GButton(icon: Icons.settings, text: "Settings",),
-          GButton(icon: Icons.add_circle_sharp, text: "Record",),
         ],
         onTabChange: (value) => onTabChange!(value),
       ),
