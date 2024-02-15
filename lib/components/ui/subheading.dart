@@ -5,7 +5,7 @@ class SubheadingWidget extends StatelessWidget {
   String subheading = "";
   double marginBottom = 0;
 
-  SubheadingWidget({super.key, required this.heading, this.subheading = "", this.marginBottom = 12});
+  SubheadingWidget({super.key, required this.heading, this.subheading = "", this.marginBottom = 0});
 
   @override
   Widget build(BuildContext context) {
