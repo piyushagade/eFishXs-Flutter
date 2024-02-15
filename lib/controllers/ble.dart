@@ -19,11 +19,13 @@ class BLEController extends GetxController {
   late BluetoothDevice connecteddevice;
   late int devicesCount;
   RxBool connected = false.obs;
+  late String disconnectionreason;
 
   late SerialMonitorPage serialMonitorPage;
 
   // Define a function type for the callback
   late void Function() onDisconnect;
+  late Timer reconnectiontimer;
 
   // Constructor to receive the callback function
   BLEController({required this.onDisconnect});
@@ -165,10 +167,11 @@ class BLEController extends GetxController {
   }
 
   void connectdevice(context, BluetoothDevice device) async {
+    disconnectionreason = "";
     isConnecting.value = true;
     print('LOG: Connecting to device: ${device.name}');
 
-     var connectingsnackbar = Get.snackbar(
+    var connectingsnackbar = Get.snackbar(
       "Connecting to your device",
       "Please wait while we establish a connection.",
       animationDuration: const Duration(milliseconds: 200),
@@ -217,6 +220,7 @@ class BLEController extends GetxController {
         () async {
           try { connectingsnackbar.close(); } catch (e) {}
           isConnecting.value = false;
+          try { reconnectiontimer.cancel(); } catch (e) {}
           
           var connectedsnackbar = Get.snackbar(
             "Connected",
@@ -278,10 +282,11 @@ class BLEController extends GetxController {
                 if (event == BluetoothDeviceState.disconnected ||
                     event == BluetoothDeviceState.disconnecting) {
                   try {
-                    print(
-                        'LOG: Disconnecting from device: ${connecteddevice.name}');
+                    if (disconnectionreason != "user") disconnectionreason = "device";
+                    print('LOG: Disconnecting from device: ${connecteddevice.name.trim()}' + ". Reason: " + disconnectionreason + ".");
                     await connecteddevice.disconnect();
                     connected.value = false;
+
 
                     serialtimewidgetarray.add(SerialMonitorTimeItem());
                     serialdatawidgetarray.add(
@@ -293,11 +298,14 @@ class BLEController extends GetxController {
                   } catch (e) {
                     print('LOG: Error disconnecting from device: $e');
                   }
+                  
+                  bool reconnect = _prefs?.getBool("settings/serialmonitor/autoconnect") ?? true;
+                  Future.delayed(const Duration(milliseconds: 200));
 
                   try {
                     Get.snackbar(
                       "Notification",
-                      "The device has disconnected.",
+                      "The device has disconnected.${reconnect ? " Waiting for the device for reconnection." : ""}",
                       animationDuration: const Duration(milliseconds: 200),
                       borderRadius: 2,
                       icon: const Icon(Icons.bluetooth_disabled),
@@ -313,6 +321,13 @@ class BLEController extends GetxController {
                     onDisconnect();
                     connected.value = false;
                     print("LOG: Device disconnected.");
+
+                    if (reconnect && disconnectionreason == "device") {
+                      reconnectiontimer = Timer.periodic(const Duration (seconds: 5), (timer) {
+                        print ("LOG: Attempting reconnection");
+                        connectdevice(context, connecteddevice);
+                      });
+                    }
                   } catch (e) {
                     print("LOGERR: Error while cleanup after disconnecting.");
                     print(e);
@@ -369,10 +384,13 @@ class BLEController extends GetxController {
   }
 
   void disconnectdevice() async {
+    try { reconnectiontimer.cancel(); } catch (e) {}
+
     try {
       print('LOG: Disconnecting from device: ${connecteddevice.name}');
       await connecteddevice.disconnect();
       connected.value = false;
+      disconnectionreason = "user";
 
     } catch (e) {
       print('LOG: Error disconnecting from device: $e');
@@ -384,6 +402,7 @@ class BLEController extends GetxController {
   }
 
   void disconnectalldevices() async {
+    try { reconnectiontimer.cancel(); } catch (e) {}
 
     List<BluetoothDevice> connectedDevices = await ble.connectedDevices;
     // Disconnect from each connected device

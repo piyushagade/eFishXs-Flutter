@@ -38,12 +38,23 @@ class _SerialMonitorItemState extends State<SerialMonitorItem> {
 
     Widget body = SizedBox(
       height: 17.0 + (_prefs?.getInt("settings/serialmonitor/fontsize") ?? 3 / 1.8) * 1.8,
-      child: Text(
-        widget.data.trimRight(),
-        textAlign: TextAlign.left,
-        style: TextStyle(
-          color: color,
-          fontSize: fontsizes[_prefs?.getInt("settings/serialmonitor/fontsize") ?? 4] + 3,
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width - 150,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Text(
+            widget.data.trimRight(),
+            textAlign: TextAlign.left,
+            overflow: TextOverflow.clip,
+            maxLines:
+                null, // Set to null to allow text wrapping to multiple lines
+            style: TextStyle(
+              color: color,
+              fontSize: fontsizes[
+                      _prefs?.getInt("settings/serialmonitor/fontsize") ?? 4] +
+                  3,
+            ),
+          ),
         ),
       ),
     );
