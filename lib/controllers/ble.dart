@@ -16,6 +16,7 @@ import 'package:permission_handler/permission_handler.dart';
 class BLEController extends GetxController {
   FlutterBlue ble = FlutterBlue.instance;
   late BluetoothDevice connecteddevice;
+  late int devicesCount;
   RxBool connected = false.obs;
 
   late SerialMonitorPage serialMonitorPage;
@@ -41,6 +42,7 @@ class BLEController extends GetxController {
   var lastserialline = "".obs;
   RxBool isScanning = false.obs;
   RxBool isConnecting = false.obs;
+  RxString statusText = "".obs;
 
   RxBool isOn = true.obs;
   RxBool isAvailable = true.obs;
@@ -110,7 +112,11 @@ class BLEController extends GetxController {
   }
 
   Future<void> scandevices() async {
-    
+    try { statusText.value = "Found $devicesCount device(s)."; } catch (e) {}
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+        statusText.value = "Scanning for nearby devices";
+    });
+
     if (!isScanning.value) {
       WidgetsBinding.instance!.addPostFrameCallback((_) {
         isScanning.value = true;
@@ -122,21 +128,25 @@ class BLEController extends GetxController {
         if (await Permission.bluetoothScan.request().isGranted &&
             await Permission.bluetoothConnect.request().isGranted) {
         }
-      } else {
-      }
+      } else {}
 
       // Start scanning
-      await ble.startScan(timeout: Duration(seconds: 5));
+      await ble.startScan(timeout: const Duration(seconds: 5));
 
       // Listen to scan results
       subscription = ble.scanResults.listen((results) {
-        // print("Found ${results.length} devices");
-        // for (ScanResult result in results) {}
+        devicesCount = 0;
+        for (ScanResult result in results) {
+          if (result.device.name.isNotEmpty) {
+            devicesCount++;
+          }
+        }
       });
 
-      // Stop scanning after 10 seconds
-      await Future.delayed(const Duration(seconds: 5));
+      // Stop scanning after 5 seconds
       await ble.stopScan();
+      statusText.value = "Found $devicesCount device(s).";
+      print("LOG: Scanning stopped.");
       isScanning.value = false;
       subscription.cancel();
     }
@@ -148,7 +158,6 @@ class BLEController extends GetxController {
 
   void connectdevice(context, BluetoothDevice device) async {
     isConnecting.value = true;
-
     print('LOG: Connecting to device: ${device.name}');
 
     var connectingsnackbar = Get.snackbar(
@@ -171,7 +180,7 @@ class BLEController extends GetxController {
 
     try {
       final connecttimeouttimer = Timer(const Duration(seconds: 5), () async {
-      connectingsnackbar.close();
+      try { connectingsnackbar.close(); } catch (e) {}
       isConnecting.value = false;
 
       var connectionerrorsnackbar = Get.snackbar(
@@ -198,7 +207,7 @@ class BLEController extends GetxController {
       final connectionuitimeouttimer = Timer(
         const Duration(seconds: 1),
         () async {
-          connectingsnackbar.close();
+          try { connectingsnackbar.close(); } catch (e) {}
           isConnecting.value = false;
           
           var connectedsnackbar = Get.snackbar(
@@ -367,6 +376,16 @@ class BLEController extends GetxController {
   }
 
   Stream<List<ScanResult>> get ScanResults => ble.scanResults;
+
+  Future<int> getFoundDevicesCount() async {
+    int count =  0;
+    await for (var result in ScanResults) {
+      count += 1;
+      statusText.value = "Found $count devices.";
+    }
+    
+    return count;
+  }
 
   // Write data to the characteristic
   Future<void> senddata(String data) async {

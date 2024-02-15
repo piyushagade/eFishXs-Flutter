@@ -82,6 +82,24 @@ class DevicesPage extends StatelessWidget {
               ),
               const SizedBox(height: 8),
 
+              // Status
+              Obx(
+                () => Container(
+                  decoration: const BoxDecoration(
+                    color: Color.fromARGB(255, 77, 77, 77),
+                  ),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Column(
+                    children: [
+                      Text(controller.statusText.value),
+                    ],
+                  ),
+                ),
+              ),
+
               Obx(() => Visibility(
                   visible: !controller.isAvailable.value,
                   child: Container(
@@ -142,7 +160,8 @@ class DevicesPage extends StatelessWidget {
                                     String deviceName = data.device.name != ""
                                         ? data.device.name
                                         : 'Unknown Device'; // Handle null device name
-                                        
+                                    String deviceRssi = data.rssi.toString();
+
                                     if (data.device.name != "") {
                                       String deviceId = data.device.id.id;
                                       BluetoothDeviceType deviceTypeEnum =
@@ -321,9 +340,22 @@ class DevicesPage extends StatelessWidget {
                                                     const Spacer(),
                                                     Opacity(
                                                       opacity: 0.8,
+                                                      child: Text("$deviceRssi dB",
+                                                        style: const TextStyle(
+                                                          color: Color.fromARGB(255, 63, 255, 185),
+                                                          fontSize: 14,
+                                                          fontWeight: FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(
+                                                      width: 8,
+                                                    ),
+                                                    Opacity(
+                                                      opacity: 0.8,
                                                       child: Text(deviceType,
                                                         style: const TextStyle(
-                                                          color: Color.fromARGB(255, 63, 140, 255),
+                                                          color: Color.fromARGB(255, 82, 175, 251),
                                                           fontSize: 14,
                                                           fontWeight: FontWeight.bold,
                                                         ),
