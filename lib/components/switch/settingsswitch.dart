@@ -4,11 +4,13 @@ import 'package:flutter/cupertino.dart';
 class SettingsSwitchItem extends StatefulWidget {
   final String label;
   final bool value;
+  final onChanged;
 
   const SettingsSwitchItem({
     Key? key,
     required this.label,
     required this.value,
+    required this.onChanged
   }) : super(key: key);
 
   @override
@@ -52,7 +54,7 @@ class _SettingsSwitchItemState extends State<SettingsSwitchItem> {
               onChanged: (value) {
                 setState(() {
                   _switchValue = value;
-                  print("LOG: Switch toggled: $_switchValue");
+                  widget.onChanged(value);
                 });
               },
             ),

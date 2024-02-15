@@ -5,16 +5,22 @@ import 'package:efishxs/controllers/ble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class DevicesPage extends StatelessWidget {
+class DevicesPage extends StatefulWidget {
   DevicesPage({Key? key}) : super(key: key);
+
+  @override
+  State<DevicesPage> createState() => _DevicesPageState();
+}
+
+class _DevicesPageState extends State<DevicesPage> {
   int devicecount = 0;
 
   late BLEController controller;
 
   @override
   Widget build(BuildContext context) {
-
     print("LOG: Instantiating BLEController.");
     
     final controller = Get.put(BLEController(
@@ -344,7 +350,7 @@ class DevicesPage extends StatelessWidget {
                                                         style: const TextStyle(
                                                           color: Color.fromARGB(255, 63, 255, 185),
                                                           fontSize: 14,
-                                                          fontWeight: FontWeight.bold,
+                                                          fontWeight: FontWeight.w400,
                                                         ),
                                                       ),
                                                     ),

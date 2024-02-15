@@ -6,10 +6,19 @@ import 'package:efishxs/controllers/ble.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class SerialMonitorPage extends StatelessWidget {
+class SerialMonitorPage extends StatefulWidget {
 
+  @override
+  State<SerialMonitorPage> createState() => _SerialMonitorPageState();
+}
+
+class _SerialMonitorPageState extends State<SerialMonitorPage> {
   final controller = Get.find<BLEController>();
+  SharedPreferences? _prefs;
+  late Future<void> _prefsFuture;
+
   bool showtimestamp = true;
 
   void sendcommand(String command) {
@@ -22,6 +31,16 @@ class SerialMonitorPage extends StatelessWidget {
     ));
   }
   
+  @override
+  void initState() {
+    super.initState();
+    _prefsFuture = SharedPreferences.getInstance().then((value) {
+      setState(() {
+        _prefs = value; 
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,6 +113,7 @@ class SerialMonitorPage extends StatelessWidget {
               ),
             ),
 
+            // Serial Monitor
             Expanded(
               child: Container(
                 decoration: BoxDecoration(

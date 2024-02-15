@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 class SettingsDropdownWidget extends StatefulWidget {
   final label;
   final List<String> items;
-  final ValueChanged<String> onChanged;
-  final int defaultItem;
+  final ValueChanged<int> onChanged;
+  final int defaultItemIndex;
 
   const SettingsDropdownWidget({
     super.key,
     required this.label,
     required this.items,
     required this.onChanged,
-    this.defaultItem = 0,
+    this.defaultItemIndex = 0,
   });
 
   @override
@@ -20,13 +20,15 @@ class SettingsDropdownWidget extends StatefulWidget {
 
 class _SettingsDropdownWidgetState extends State<SettingsDropdownWidget> {
   String? _selectedItem;
+  int? _selectedItemIndex;
 
   @override
   void initState() {
     super.initState();
-    
+
     // Initialize _selectedItem with the default value here
-    _selectedItem = widget.items[widget.defaultItem];
+    _selectedItemIndex = widget.defaultItemIndex;
+    _selectedItem = widget.items[widget.defaultItemIndex];
   }
 
   @override
@@ -65,7 +67,8 @@ class _SettingsDropdownWidgetState extends State<SettingsDropdownWidget> {
               onChanged: (String? newValue) {
                 setState(() {
                   _selectedItem = newValue;
-                  widget.onChanged(newValue!);
+                  _selectedItemIndex = widget.items.indexOf(newValue!);
+                  widget.onChanged(_selectedItemIndex!);
                 });
               },
             )

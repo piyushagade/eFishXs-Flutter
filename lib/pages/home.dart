@@ -10,6 +10,7 @@ import 'package:efishxs/pages/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePageWidget extends StatefulWidget {
   const HomePageWidget({super.key});
@@ -19,8 +20,10 @@ class HomePageWidget extends StatefulWidget {
 }
 
 class _HomePageWidgetState extends State<HomePageWidget> {
+  SharedPreferences? _prefs;
+  final GlobalKey bottomNavBarKey = GlobalKey();
 
-  int _selectedtabindex = 0;
+  int? _selectedtabindex = 0;
   bool _bl_connection_status = true;
 
   void navigatebottombar (int index) {
@@ -34,6 +37,10 @@ class _HomePageWidgetState extends State<HomePageWidget> {
   @override
   void initState() {
     super.initState();
+    SharedPreferences.getInstance().then((value) {
+      _prefs = value; 
+      navigatebottombar(_prefs?.getInt("settings/general/openinpage") ?? 0);
+    });
   }
   
 
@@ -41,14 +48,6 @@ class _HomePageWidgetState extends State<HomePageWidget> {
   void dispose() {
     super.dispose();
   }
-  
-
-  // Timer.periodic(const Duration(seconds:  2), (Timer t) {
-  //   setState(() {
-  //     _bl_connection_status = controller.isconnected();
-  //   });
-  //   print("LOG: Checking connection status: " + _bl_connection_status.toString());
-  // });
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +63,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
         child: Obx(() => Opacity(
             opacity: controller.connected.value ? 1 : 0.2,
             child: BottomNavBar(
+              key: bottomNavBarKey,
+              selectedIndex: _selectedtabindex ?? 0,
               onTabChange: (index) {
                 navigatebottombar(index);
               }
@@ -128,7 +129,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
         ignoring: !controller.connected.value,
           child: Opacity(
             opacity: controller.connected.value ? 1 : 0.2,
-            child: _pages[_selectedtabindex],
+            child: _pages[_selectedtabindex ?? 0],
           ),
         ),
       ),
