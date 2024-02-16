@@ -34,22 +34,23 @@ class _SerialMonitorTimeItemState extends State<SerialMonitorTimeItem> {
     List<double> fontsizes = const [7, 8, 9, 10, 12, 14, 16, 20];
 
     Widget body = SizedBox(
-      height: 17.0 + (_prefs?.getInt("settings/serialmonitor/fontsize") ?? 3 / 1.8) * 1.8,
+      // height: 17.0 + (_prefs?.getInt("settings/serialmonitor/fontsize") ?? 3 / 1.8) * 1.8,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 2.0, 0, 0),
+          Transform.scale(
+            scale: 0.8,
             child: Text(
+              textAlign: TextAlign.right,
               DateFormat(formats[_prefs?.getInt("settings/serialmonitor/timestampformat") ?? 1]).format(DateTime.now()),
               style: TextStyle(
                 color: const Color.fromARGB(255, 203, 203, 203),
-                fontSize: fontsizes[_prefs?.getInt("settings/serialmonitor/fontsize") ?? 3],
+                fontSize: fontsizes[_prefs?.getInt("settings/serialmonitor/fontsize") ?? 3] + 3,
               ),
             ),
           ),
       
-          const SizedBox(width: 8),
+          const SizedBox(width: 2),
         ],
       ),
     );

@@ -37,9 +37,9 @@ class _SerialMonitorItemState extends State<SerialMonitorItem> {
         widget.type == "outgoing" ? const Color.fromARGB(255, 194, 30, 139) : const Color.fromARGB(255, 223, 195, 13);
 
     Widget body = SizedBox(
-      height: 17.0 + (_prefs?.getInt("settings/serialmonitor/fontsize") ?? 3 / 1.8) * 1.8,
+      // height: 17.0 + (_prefs?.getInt("settings/serialmonitor/fontsize") ?? 3 / 1.8) * 1.8,
       child: SizedBox(
-        width: MediaQuery.of(context).size.width - 150,
+        // width: MediaQuery.of(context).size.width - 150,
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Text(
@@ -51,8 +51,7 @@ class _SerialMonitorItemState extends State<SerialMonitorItem> {
             style: TextStyle(
               color: color,
               fontSize: fontsizes[
-                      _prefs?.getInt("settings/serialmonitor/fontsize") ?? 3] +
-                  3,
+                      _prefs?.getInt("settings/serialmonitor/fontsize") ?? 3] + 3,
             ),
           ),
         ),
