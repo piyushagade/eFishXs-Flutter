@@ -196,7 +196,7 @@ class BLEController extends GetxController {
 
       var connectionerrorsnackbar = Get.snackbar(
           "Bluetooth error",
-          "We couldn't establish a connection. Likely, the device is not powered on.",
+          "We couldn't establish a connection. Likely, the device is not powered on or out of range.",
           animationDuration: const Duration(milliseconds: 200),
           borderRadius: 2,
           icon: const Icon(Icons.bluetooth_disabled),
@@ -221,124 +221,144 @@ class BLEController extends GetxController {
           try { connectingsnackbar.close(); } catch (e) {}
           isConnecting.value = false;
           try { reconnectiontimer.cancel(); } catch (e) {}
-          
-          var connectedsnackbar = Get.snackbar(
-            "Connected",
-            "The device is now connected.",
-            animationDuration: const Duration(milliseconds: 200),
-            borderRadius: 2,
-            icon: const Icon(Icons.bluetooth),
-            snackPosition: SnackPosition.BOTTOM,
-            duration: const Duration(seconds: 2),
-            margin: const EdgeInsets.all(20),
-            backgroundColor: const Color.fromARGB(255, 30, 82, 40),
-          );
-
-          connecteddevice = device;
-          connected.value = true;
-          serialtimewidgetarray.add(SerialMonitorTimeItem());
-          serialdatawidgetarray.add(
-            SerialMonitorItem(
-              data: "Device connected",
-              type: "status",
-            ),
-          );
 
           // Get services
-          List<BluetoothService> services = await device.discoverServices();
-          for (BluetoothService service in services) {
-            for (BluetoothCharacteristic characteristic
-                in service.characteristics) {
-              if (characteristic.uuid.toString() ==
-                  "0000ffe1-0000-1000-8000-00805f9b34fb") {
-                targetservice = service;
-                targetcharacteristic = characteristic;
+          try {
+            List<BluetoothService> services = await device.discoverServices();
+            for (BluetoothService service in services) {
+              for (BluetoothCharacteristic characteristic
+                  in service.characteristics) {
+                if (characteristic.uuid.toString() ==
+                    "0000ffe1-0000-1000-8000-00805f9b34fb") {
+                  targetservice = service;
+                  targetcharacteristic = characteristic;
+                }
               }
             }
-          }
 
-          if (targetcharacteristic != null) {
-            print("LOG: Valid GatorByte device detected.");
-            Future.delayed(const Duration(milliseconds: 100), () {
-              Get.to(() => const HomePageWidget());
-            });
-          } else {
-            print("LOG: Not a valid GatorByte device.");
-          }
-
-          // Read the value of the target characteristic
-          if (targetservice != null && targetcharacteristic != null) {
-            listenfordata();
-          }
-
-          // Handle device events
-          Future.delayed(
-            const Duration(seconds: 1),
-            () {
-              statelistener = device.state.listen((event) async {
-                print("LOG: State: " + event.toString());
-
-                // Handle disconnections
-                if (event == BluetoothDeviceState.disconnected ||
-                    event == BluetoothDeviceState.disconnecting) {
-                  try {
-                    if (disconnectionreason != "user") disconnectionreason = "device";
-                    print('LOG: Disconnecting from device: ${connecteddevice.name.trim()}' + ". Reason: " + disconnectionreason + ".");
-                    await connecteddevice.disconnect();
-                    connected.value = false;
-
-
-                    serialtimewidgetarray.add(SerialMonitorTimeItem());
-                    serialdatawidgetarray.add(
-                      SerialMonitorItem(
-                        data: "Device disconnected",
-                        type: "status",
-                      ),
-                    );
-                  } catch (e) {
-                    print('LOG: Error disconnecting from device: $e');
-                  }
-                  
-                  bool reconnect = _prefs?.getBool("settings/serialmonitor/autoconnect") ?? true;
-                  Future.delayed(const Duration(milliseconds: 200));
-
-                  try {
-                    Get.snackbar(
-                      "Notification",
-                      "The device has disconnected.${reconnect ? " Waiting for the device for reconnection." : ""}",
-                      animationDuration: const Duration(milliseconds: 200),
-                      borderRadius: 2,
-                      icon: const Icon(Icons.bluetooth_disabled),
-                      snackPosition: SnackPosition.BOTTOM,
-                      duration: const Duration(seconds: 3),
-                      margin: const EdgeInsets.all(20),
-                      backgroundColor: const Color.fromARGB(255, 94, 80, 13),
-                    );
-
-                    statelistener!.cancel();
-                    subscription!.cancel();
-                    datastreamlistener!.cancel();
-                    onDisconnect();
-                    connected.value = false;
-                    print("LOG: Device disconnected.");
-
-                    if (reconnect && disconnectionreason == "device") {
-                      reconnectiontimer = Timer.periodic(const Duration (seconds: 5), (timer) {
-                        print ("LOG: Attempting reconnection");
-                        connectdevice(context, connecteddevice);
-                      });
-                    }
-                  } catch (e) {
-                    print("LOGERR: Error while cleanup after disconnecting.");
-                    print(e);
-                  }
-
-                  // // Show devices page
-                  // Get.offAll(DevicesPage());
-                }
+            if (targetcharacteristic != null) {
+              print("LOG: Valid GatorByte device detected.");
+              Future.delayed(const Duration(milliseconds: 100), () {
+                Get.to(() => const HomePageWidget());
+                
+                var connectedsnackbar = Get.snackbar(
+                  "Connected",
+                  "The device is now connected.",
+                  animationDuration: const Duration(milliseconds: 200),
+                  borderRadius: 2,
+                  icon: const Icon(Icons.bluetooth),
+                  snackPosition: SnackPosition.BOTTOM,
+                  duration: const Duration(seconds: 2),
+                  margin: const EdgeInsets.all(20),
+                  backgroundColor: const Color.fromARGB(255, 30, 82, 40),
+                );
+                
               });
-            },
-          );
+            } else {
+              print("LOG: Not a valid GatorByte device.");
+
+              var connectedsnackbar = Get.snackbar(
+                  "Connected",
+                  "The device is now connected. However, this is not a valid device.",
+                  animationDuration: const Duration(milliseconds: 200),
+                  borderRadius: 2,
+                  icon: const Icon(Icons.bluetooth),
+                  snackPosition: SnackPosition.BOTTOM,
+                  duration: const Duration(seconds: 2),
+                  margin: const EdgeInsets.all(20),
+                  backgroundColor: const Color.fromARGB(255, 30, 82, 40),
+                );
+            }
+            
+
+            connecteddevice = device;
+            connected.value = true;
+            serialtimewidgetarray.add(SerialMonitorTimeItem());
+            serialdatawidgetarray.add(
+              SerialMonitorItem(
+                data: "Device connected",
+                type: "status",
+              ),
+            );
+
+            // Read the value of the target characteristic
+            if (targetservice != null && targetcharacteristic != null) {
+              listenfordata();
+            }
+
+            // Handle device events
+            Future.delayed(
+              const Duration(seconds: 1),
+              () {
+                statelistener = device.state.listen((event) async {
+                  print("LOG: State: " + event.toString());
+
+                  // Handle disconnections
+                  if (event == BluetoothDeviceState.disconnected ||
+                      event == BluetoothDeviceState.disconnecting) {
+                    try {
+                      if (disconnectionreason != "user") disconnectionreason = "device";
+                      print('LOG: Disconnecting from device: ${connecteddevice.name.trim()}' + ". Reason: " + disconnectionreason + ".");
+                      await connecteddevice.disconnect();
+                      connected.value = false;
+
+
+                      serialtimewidgetarray.add(SerialMonitorTimeItem());
+                      serialdatawidgetarray.add(
+                        SerialMonitorItem(
+                          data: "Device disconnected",
+                          type: "status",
+                        ),
+                      );
+                    } catch (e) {
+                      print('LOG: Error disconnecting from device: $e');
+                    }
+                    
+                    bool reconnect = _prefs?.getBool("settings/serialmonitor/autoconnect") ?? true;
+                    Future.delayed(const Duration(milliseconds: 200));
+
+                    try {
+                      Get.snackbar(
+                        "Notification",
+                        "The device has disconnected.${reconnect && disconnectionreason == "device" ? " Waiting for the device for reconnection." : ""}",
+                        animationDuration: const Duration(milliseconds: 200),
+                        borderRadius: 2,
+                        icon: const Icon(Icons.bluetooth_disabled),
+                        snackPosition: SnackPosition.BOTTOM,
+                        duration: const Duration(seconds: 3),
+                        margin: const EdgeInsets.all(20),
+                        backgroundColor: const Color.fromARGB(255, 94, 80, 13),
+                      );
+
+                      statelistener!.cancel();
+                      subscription!.cancel();
+                      datastreamlistener!.cancel();
+                      onDisconnect();
+                      connected.value = false;
+                      print("LOG: Device disconnected.");
+
+                      if (reconnect && disconnectionreason == "device") {
+                        reconnectiontimer = Timer.periodic(const Duration (seconds: 5), (timer) {
+                          print ("LOG: Attempting reconnection");
+                          connectdevice(context, connecteddevice);
+                        });
+                      }
+                    } catch (e) {
+                      print("LOGERR: Error while cleanup after disconnecting.");
+                      print(e);
+                    }
+
+                    // // Show devices page
+                    // Get.offAll(DevicesPage());
+                  }
+                });
+              },
+            );
+            
+          }
+          catch (e) {
+            print ("LOGERR: " + e.toString());
+          }
         },
       );
     } catch (e) {

@@ -59,8 +59,9 @@ class _SettingsDropdownWidgetState extends State<SettingsDropdownWidget> {
               items: widget.items.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
-                    child: Center(
-                      child: Text(value),
+                    child: Text(
+                      value,
+                      textAlign: TextAlign.center,
                     ),
                 );
               }).toList(),

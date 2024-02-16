@@ -51,7 +51,7 @@ class _SerialMonitorItemState extends State<SerialMonitorItem> {
             style: TextStyle(
               color: color,
               fontSize: fontsizes[
-                      _prefs?.getInt("settings/serialmonitor/fontsize") ?? 4] +
+                      _prefs?.getInt("settings/serialmonitor/fontsize") ?? 3] +
                   3,
             ),
           ),

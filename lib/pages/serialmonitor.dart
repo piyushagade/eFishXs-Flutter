@@ -74,11 +74,15 @@ class _SerialMonitorPageState extends State<SerialMonitorPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            HeadingWidget(
-                heading: "Serial Monitor",
-                subheading:
-                  "Logs every communication to and from your bluetooth device.",
-                  marginBottom: 0,
+
+            Visibility(
+              visible: _prefs?.getBool("settings/general/showheading") ?? true,
+              child: HeadingWidget(
+                  heading: "Serial Monitor",
+                  subheading:
+                    "Logs every communication to and from your bluetooth device.",
+                    marginBottom: 0,
+              ),
             ),
 
             // Action buttons

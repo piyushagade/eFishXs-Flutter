@@ -278,6 +278,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.0.0"
+  flutter_responsive_flex_grid:
+    dependency: "direct main"
+    description:
+      name: flutter_responsive_flex_grid
+      sha256: d9942dd486c7f0c8d0254bbe24d71ffee33e26d706aae10f1435d424d406a4bd
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.2"
   flutter_test:
     dependency: "direct dev"
     description: flutter

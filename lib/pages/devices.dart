@@ -91,8 +91,9 @@ class _DevicesPageState extends State<DevicesPage> {
               // Status
               Obx(
                 () => Container(
-                  decoration: const BoxDecoration(
-                    color: Color.fromARGB(255, 77, 77, 77),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 77, 77, 77),
+                    borderRadius: BorderRadius.circular(2)
                   ),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 8),

@@ -44,7 +44,7 @@ class _SerialMonitorTimeItemState extends State<SerialMonitorTimeItem> {
               DateFormat(formats[_prefs?.getInt("settings/serialmonitor/timestampformat") ?? 1]).format(DateTime.now()),
               style: TextStyle(
                 color: const Color.fromARGB(255, 203, 203, 203),
-                fontSize: fontsizes[_prefs?.getInt("settings/serialmonitor/fontsize") ?? 4],
+                fontSize: fontsizes[_prefs?.getInt("settings/serialmonitor/fontsize") ?? 3],
               ),
             ),
           ),

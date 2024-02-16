@@ -36,29 +36,50 @@ class _SettingsPageState extends State<SettingsPage> {
         child: Column(
           children: [
         
-            HeadingWidget(heading: "Settings", subheading: "Customize your experience and app configurations.", marginBottom: 2,),
+            Visibility(
+              visible: _prefs?.getBool("settings/general/showheading") ?? true,
+              child: HeadingWidget(
+                heading: "Settings",
+                subheading: "Customize your experience and app configurations.",
+                marginBottom: 2,
+              ),
+            ),
         
             // General settings
             Column(
               children: [
 
                 SubheadingWidget(heading: "General settings", subheading: "Basic application behavior and appearance settings",),
-                
+
+                SettingsSwitchItem(
+                  label: "Page headings",
+                  value: _prefs?.getBool("settings/general/showheading") ?? true,
+                  onChanged: (bool newvalue) async {
+                    await _prefs?.setBool("settings/general/showheading", newvalue);
+                    setState(() {});
+                  },
+                ),
+
                 SettingsDropdownWidget(label: "Orientation",
                   items: const ["Auto-rotate", "Potrait", "Landscape"],
                   defaultItemIndex: _prefs?.getInt("settings/general/orientation") ?? 1,
                   onChanged: (int newvalue) async {
                     await _prefs?.setInt("settings/general/orientation", newvalue);
+                    setState(() {});
                   },
                 ),
 
-                SettingsSwitchItem(
-                  label: "Dark Mode",
-                  value: _prefs?.getBool("settings/general/darkmode") ?? true,
-                  onChanged: (bool newvalue) async {
-                    await _prefs?.setBool("settings/general/darkmode", newvalue);
-                  },
+                Visibility(
+                  visible: false,
+                  child: SettingsSwitchItem(
+                    label: "Dark Mode",
+                    value: _prefs?.getBool("settings/general/darkmode") ?? true,
+                    onChanged: (bool newvalue) async {
+                      await _prefs?.setBool("settings/general/darkmode", newvalue);
+                    },
+                  ),
                 ),
+
                 SettingsDropdownWidget(
                   label: "Open in page",
                   items: const ["Dashboard", "Monitor", "Settings"],
@@ -119,7 +140,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 SettingsDropdownWidget(
                   label: "Font size",
                   items: const ["Atomic", "Microscopic", "Tiny", "Small", "Medium", "Large", "Huge", "Gigantic"],
-                  defaultItemIndex: _prefs?.getInt("settings/serialmonitor/fontsize") ?? 4,
+                  defaultItemIndex: _prefs?.getInt("settings/serialmonitor/fontsize") ?? 3,
                   onChanged: (int newvalue) async {
                     await _prefs?.setInt("settings/serialmonitor/fontsize", newvalue);
                   },

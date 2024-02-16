@@ -24,7 +24,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         iconSize: 24,
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
         selectedIndex: widget.selectedIndex,
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.inversePrimary,
         activeColor: Theme.of(context).colorScheme.inversePrimary,
         tabBorder: Border.all(color: Colors.transparent),
         tabActiveBorder: Border.all(color: Colors.transparent),
