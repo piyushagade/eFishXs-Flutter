@@ -77,7 +77,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                   
                   ResponsiveGridItem(
                     xs: 32,
-                    sm: 60,
+                    sm: 20,
                     md: 70,
                     child: SizedBox(
                       height: 110,
@@ -91,7 +91,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                   
                   ResponsiveGridItem(
                     xs: 32,
-                    sm: 60,
+                    sm: 20,
                     md: 70,
                     child: SizedBox(
                       height: 110,
@@ -105,7 +105,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                   
                   ResponsiveGridItem(
                     xs: 32,
-                    sm: 60,
+                    sm: 20,
                     md: 70,
                     child: SizedBox(
                       height: 110,
@@ -119,7 +119,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                   
                   ResponsiveGridItem(
                     xs: 32,
-                    sm: 60,
+                    sm: 20,
                     md: 70,
                     child: SizedBox(
                       height: 110,
@@ -133,7 +133,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                   
                   ResponsiveGridItem(
                     xs: 32,
-                    sm: 60,
+                    sm: 20,
                     md: 70,
                     child: SizedBox(
                       height: 110,
