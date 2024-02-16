@@ -305,8 +305,7 @@ class _DevicesPageState extends State<DevicesPage> {
                                                               Navigator.pop(context);
                                         
                                                               // Connect to the device
-                                                              controller
-                                                                  .connectdevice(context, data.device);
+                                                              controller.connectdevice(context, data.device);
                                                             },
                                                           ),
                                                         ],

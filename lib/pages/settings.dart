@@ -1,3 +1,6 @@
+import 'package:efishxs/theme/themeprovider.dart';
+import 'package:provider/provider.dart';
+
 import '../components/switch/settingsdropdown.dart';
 import '../components/switch/settingsswitch.dart';
 import '../components/ui/heading.dart';
@@ -69,6 +72,20 @@ class _SettingsPageState extends State<SettingsPage> {
                   onChanged: (int newvalue) async {
                     await _prefs?.setInt("settings/general/orientation", newvalue);
                     setState(() {});
+                  },
+                ),
+
+                SettingsDropdownWidget(
+                  label: "Theme",
+                  description: "Select an app-wide theme.",
+                  items: const ["Dark", "Dark Grey", "Light Grey", "Light"],
+                  defaultItemIndex: _prefs?.getInt("settings/general/theme") ?? 0,
+                  onChanged: (int newvalue) async {
+                    await _prefs?.setInt("settings/general/theme", newvalue);
+                    
+                    setState(() {
+                      Provider.of<ThemeProvider>(context).settheme(["Dark", "Dark Grey", "Light Grey", "Light"][newvalue]);
+                    });
                   },
                 ),
 

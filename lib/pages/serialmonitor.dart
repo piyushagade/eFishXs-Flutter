@@ -1,6 +1,6 @@
 import 'package:efishxs/components/buttons/button.dart';
 import 'package:efishxs/components/ui/heading.dart';
-import 'package:efishxs/components/listitems/serialmonitoritem.dart';
+import 'package:efishxs/components/listitems/serialmonitordataitem.dart';
 import 'package:efishxs/components/listitems/serialmonitortimeitem.dart';
 import 'package:efishxs/controllers/ble.dart';
 import 'package:flutter/gestures.dart';

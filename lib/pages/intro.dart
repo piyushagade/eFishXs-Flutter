@@ -1,3 +1,4 @@
+import 'package:efishxs/globals/strings.dart';
 import 'package:efishxs/pages/devices.dart';
 import 'package:flutter/material.dart';
 
@@ -7,7 +8,7 @@ class IntroPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    Future.delayed(const Duration(seconds: 1), () {
+    Future.delayed(const Duration(seconds: 2), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => DevicesPage()),
@@ -15,7 +16,7 @@ class IntroPage extends StatelessWidget {
     });
 
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -27,21 +28,21 @@ class IntroPage extends StatelessWidget {
 
               const SizedBox(height: 40),
 
-              const Text("Initializing application",
+              Text("Initializing application",
                 style: TextStyle(
                   fontWeight: FontWeight.w400,
                   fontSize: 16,
-                  color: Colors.black
+                  color: Theme.of(context).colorScheme.inversePrimary
                 )
               ),
 
               const SizedBox(height: 2),
 
-              const Text("Loading devices",
+              Text("Loading configuration",
                 style: TextStyle(
-                  fontWeight: FontWeight.w200,
+                  fontWeight: FontWeight.w400,
                   fontSize: 13,
-                  color: Colors.grey
+                  color: Theme.of(context).colorScheme.primary
                 )
               )
           ],

@@ -1,4 +1,5 @@
 import 'package:efishxs/theme/themeprovider.dart';
+import 'package:efishxs/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -34,7 +35,8 @@ class _AppState extends State<App> {
             debugShowCheckedModeBanner: false,
             showPerformanceOverlay: false,                        
             home: const IntroPage(),
-            theme: Provider.of<ThemeProvider>(context).themeData
+            theme: lightmode,
+            darkTheme: darkgreymode,
         );
     }
 }

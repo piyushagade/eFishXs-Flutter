@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:efishxs/components/listitems/serialmonitoritem.dart';
+import 'package:efishxs/components/listitems/serialmonitordataitem.dart';
 import 'package:efishxs/components/listitems/serialmonitortimeitem.dart';
 import 'package:efishxs/pages/devices.dart';
 import 'package:efishxs/pages/home.dart';
@@ -196,23 +196,23 @@ class BLEController extends GetxController {
 
     try {
       final connecttimeouttimer = Timer(const Duration(seconds: 5), () async {
-      try { activesnackbar.close(); } catch (e) {}
-      isConnecting.value = false;
+        try { activesnackbar.close(); } catch (e) {}
+        isConnecting.value = false;
 
-      if (_prefs?.getBool("settings/general/inappnotifications") ?? true) {
-        activesnackbar = Get.snackbar(
-          "Bluetooth error",
-          "We couldn't establish a connection. Likely, the device is not powered on or out of range.",
-          animationDuration: const Duration(milliseconds: 200),
-          borderRadius: 2,
-          icon: const Icon(Icons.bluetooth_disabled),
-          snackPosition: SnackPosition.BOTTOM,
-          duration: const Duration(seconds: 5),
-          margin: const EdgeInsets.all(20),
-          backgroundColor: const Color.fromARGB(255, 73, 29, 20),
-          dismissDirection: DismissDirection.horizontal,
-        );
-      }
+        if (_prefs?.getBool("settings/general/inappnotifications") ?? true) {
+          activesnackbar = Get.snackbar(
+            "Bluetooth error",
+            "We couldn't establish a connection. Likely, the device is not powered on or out of range.",
+            animationDuration: const Duration(milliseconds: 200),
+            borderRadius: 2,
+            icon: const Icon(Icons.bluetooth_disabled),
+            snackPosition: SnackPosition.BOTTOM,
+            duration: const Duration(seconds: 5),
+            margin: const EdgeInsets.all(20),
+            backgroundColor: const Color.fromARGB(255, 73, 29, 20),
+            dismissDirection: DismissDirection.horizontal,
+          );
+        }
 
         // Prevent autoconnection
         device.disconnect();
@@ -247,7 +247,7 @@ class BLEController extends GetxController {
             if (targetcharacteristic != null) {
               print("LOG: Valid GatorByte device detected.");
               Future.delayed(const Duration(milliseconds: 100), () {
-                Get.to(() => const HomePageWidget());
+                Get.off(() => const HomePageWidget());
                 
                 if (_prefs?.getBool("settings/general/inappnotifications") ?? true) {
                   activesnackbar = Get.snackbar(
@@ -284,7 +284,6 @@ class BLEController extends GetxController {
               }
             }
             
-
             connecteddevice = device;
             connected.value = true;
             serialtimewidgetarray.add(SerialMonitorTimeItem());
