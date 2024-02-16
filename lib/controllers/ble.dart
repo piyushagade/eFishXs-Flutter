@@ -181,6 +181,7 @@ class BLEController extends GetxController {
       duration: const Duration(seconds: 5),
       margin: const EdgeInsets.all(20),
       backgroundColor: const Color.fromARGB(255, 74, 74, 73),
+      dismissDirection: DismissDirection.horizontal,
     );
 
     try {
@@ -204,6 +205,7 @@ class BLEController extends GetxController {
           duration: const Duration(seconds: 5),
           margin: const EdgeInsets.all(20),
           backgroundColor: const Color.fromARGB(255, 73, 29, 20),
+          dismissDirection: DismissDirection.horizontal,
         );
 
         // Prevent autoconnection
@@ -251,6 +253,7 @@ class BLEController extends GetxController {
                   duration: const Duration(seconds: 2),
                   margin: const EdgeInsets.all(20),
                   backgroundColor: const Color.fromARGB(255, 30, 82, 40),
+                  dismissDirection: DismissDirection.horizontal,
                 );
                 
               });
@@ -267,6 +270,7 @@ class BLEController extends GetxController {
                   duration: const Duration(seconds: 2),
                   margin: const EdgeInsets.all(20),
                   backgroundColor: const Color.fromARGB(255, 30, 82, 40),
+                  dismissDirection: DismissDirection.horizontal,
                 );
             }
             
@@ -328,6 +332,7 @@ class BLEController extends GetxController {
                         duration: const Duration(seconds: 3),
                         margin: const EdgeInsets.all(20),
                         backgroundColor: const Color.fromARGB(255, 94, 80, 13),
+                        dismissDirection: DismissDirection.horizontal,
                       );
 
                       statelistener!.cancel();

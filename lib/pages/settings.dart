@@ -53,6 +53,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
                 SettingsSwitchItem(
                   label: "Page headings",
+                  description: "Disabling this will free up some space.",
                   value: _prefs?.getBool("settings/general/showheading") ?? true,
                   onChanged: (bool newvalue) async {
                     await _prefs?.setBool("settings/general/showheading", newvalue);
@@ -60,7 +61,9 @@ class _SettingsPageState extends State<SettingsPage> {
                   },
                 ),
 
-                SettingsDropdownWidget(label: "Orientation",
+                SettingsDropdownWidget(
+                  label: "Orientation",
+                  description: "Set your phone or tablet's orientation.",
                   items: const ["Auto-rotate", "Potrait", "Landscape"],
                   defaultItemIndex: _prefs?.getInt("settings/general/orientation") ?? 1,
                   onChanged: (int newvalue) async {
@@ -82,6 +85,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
                 SettingsDropdownWidget(
                   label: "Open in page",
+                  description: "Select which page to open when this application opens.",
                   items: const ["Dashboard", "Monitor", "Settings"],
                   defaultItemIndex: _prefs?.getInt("settings/general/openinpage") ?? 0,
                   onChanged: (int newvalue) async {
@@ -105,6 +109,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 
                 SettingsSwitchItem(
                   label: "Auto connect",
+                  description: "This attempts a reconnection when a device disconnects abruptly.",
                   value: _prefs?.getBool("settings/serialmonitor/autoconnect") ?? true,
                   onChanged: (bool newvalue) async {
                     await _prefs?.setBool("settings/serialmonitor/autoconnect", newvalue);
@@ -113,6 +118,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 
                 SettingsSwitchItem(
                   label: "Auto scroll",
+                  description: "Enable auto-scroll in serial monitor for hands-off monitoring.",
                   value: _prefs?.getBool("settings/serialmonitor/autoscroll") ?? true,
                   onChanged: (bool newvalue) async {
                     await _prefs?.setBool("settings/serialmonitor/autoscroll", newvalue);
@@ -121,6 +127,7 @@ class _SettingsPageState extends State<SettingsPage> {
         
                 SettingsDropdownWidget(
                   label: "New line character",
+                  description: "Select the end-of-line (EOL) character.",
                   items: const ["CRLF", "CR", "LF"],
                   defaultItemIndex: _prefs?.getInt("settings/serialmonitor/lineending") ?? 0,
                   onChanged: (int newvalue) async {
@@ -129,7 +136,8 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
         
                 SettingsDropdownWidget(
-                  label: "Time",
+                  label: "Timestamp",
+                  description: "Select the format of the timestamp in the serial monitor.",
                   items: const ["yyyy-MM-dd hh:mm:ss", "yy-MM-dd hh:mm:ss", "MM-dd hh:mm:ss", "hh:mm:ss"],
                   defaultItemIndex: _prefs?.getInt("settings/serialmonitor/timestampformat") ?? 1,
                   onChanged: (int newvalue) async {
@@ -139,6 +147,7 @@ class _SettingsPageState extends State<SettingsPage> {
         
                 SettingsDropdownWidget(
                   label: "Font size",
+                  description: "Select the font size of the text in the serial monitor.",
                   items: const ["Atomic", "Microscopic", "Tiny", "Small", "Medium", "Large", "Huge", "Gigantic"],
                   defaultItemIndex: _prefs?.getInt("settings/serialmonitor/fontsize") ?? 3,
                   onChanged: (int newvalue) async {
