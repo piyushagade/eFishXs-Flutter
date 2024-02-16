@@ -190,6 +190,8 @@ class _DevicesPageState extends State<DevicesPage> {
                                         
                                       return GestureDetector(
                                         onTap: () {
+                                          try { controller.activesnackbar.close(); } catch (e) {}
+
                                           showModalBottomSheet(
                                               elevation: 0,
                                               backgroundColor: Colors.transparent,
@@ -201,13 +203,13 @@ class _DevicesPageState extends State<DevicesPage> {
                                               ),
                                               context: context,
                                               builder: (context) => Container(
-                                                    height: 210,
-                                                    margin: const EdgeInsets.all(20),
+                                                    height: 185,
+                                                    margin: const EdgeInsets.all(10),
                                                     alignment: Alignment.bottomCenter,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
                                                           BorderRadius.circular(2),
-                                                          color: Color.fromARGB(255, 210, 210, 210),
+                                                          color: const Color.fromARGB(255, 195, 195, 195),
                                                     ),
                                                     child: Padding(
                                                       padding:
@@ -216,21 +218,13 @@ class _DevicesPageState extends State<DevicesPage> {
                                                         crossAxisAlignment:
                                                             CrossAxisAlignment.center,
                                                         children: [
-                                                          Text(
-                                                              "Confirm connection",
-                                                              textAlign:
-                                                                  TextAlign.center,
-                                                              style: TextStyle(
-                                                                fontSize: 20,
-                                                                color: Theme.of(context).colorScheme.primary
-                                                              )),
                                                           Opacity(
-                                                            opacity: 0.6,
+                                                            opacity: 1,
                                                             child: Text(
-                                                              "Are you certain you wish to connect to the following device?",
+                                                              "Are you certain you wish to connect to this device?",
                                                               textAlign: TextAlign.center,
                                                               style: TextStyle(
-                                                                fontSize: 14,
+                                                                fontSize: 16,
                                                                 color: Theme.of(context)
                                                                     .colorScheme
                                                                     .primary,

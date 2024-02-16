@@ -26,6 +26,8 @@ class BLEController extends GetxController {
   // Define a function type for the callback
   late void Function() onDisconnect;
   late Timer reconnectiontimer;
+  
+  late SnackbarController activesnackbar;
 
   // Constructor to receive the callback function
   BLEController({required this.onDisconnect});
@@ -171,18 +173,20 @@ class BLEController extends GetxController {
     isConnecting.value = true;
     print('LOG: Connecting to device: ${device.name}');
 
-    var connectingsnackbar = Get.snackbar(
-      "Connecting to your device",
-      "Please wait while we establish a connection.",
-      animationDuration: const Duration(milliseconds: 200),
-      borderRadius: 2,
-      icon: const Icon(Icons.bluetooth_disabled),
-      snackPosition: SnackPosition.BOTTOM,
-      duration: const Duration(seconds: 5),
-      margin: const EdgeInsets.all(20),
-      backgroundColor: const Color.fromARGB(255, 74, 74, 73),
-      dismissDirection: DismissDirection.horizontal,
-    );
+    if (_prefs?.getBool("settings/general/inappnotifications") ?? true) {
+      activesnackbar = Get.snackbar(
+        "Connecting to your device",
+        "Please wait while we establish a connection.",
+        animationDuration: const Duration(milliseconds: 200),
+        borderRadius: 2,
+        icon: const Icon(Icons.bluetooth_disabled),
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 5),
+        margin: const EdgeInsets.all(20),
+        backgroundColor: const Color.fromARGB(255, 74, 74, 73),
+        dismissDirection: DismissDirection.horizontal,
+      );
+    }
 
     try {
       await connecteddevice!.disconnect();
@@ -192,10 +196,11 @@ class BLEController extends GetxController {
 
     try {
       final connecttimeouttimer = Timer(const Duration(seconds: 5), () async {
-      try { connectingsnackbar.close(); } catch (e) {}
+      try { activesnackbar.close(); } catch (e) {}
       isConnecting.value = false;
 
-      var connectionerrorsnackbar = Get.snackbar(
+      if (_prefs?.getBool("settings/general/inappnotifications") ?? true) {
+        activesnackbar = Get.snackbar(
           "Bluetooth error",
           "We couldn't establish a connection. Likely, the device is not powered on or out of range.",
           animationDuration: const Duration(milliseconds: 200),
@@ -207,6 +212,7 @@ class BLEController extends GetxController {
           backgroundColor: const Color.fromARGB(255, 73, 29, 20),
           dismissDirection: DismissDirection.horizontal,
         );
+      }
 
         // Prevent autoconnection
         device.disconnect();
@@ -220,7 +226,7 @@ class BLEController extends GetxController {
       final connectionuitimeouttimer = Timer(
         const Duration(seconds: 1),
         () async {
-          try { connectingsnackbar.close(); } catch (e) {}
+          try { activesnackbar.close(); } catch (e) {}
           isConnecting.value = false;
           try { reconnectiontimer.cancel(); } catch (e) {}
 
@@ -243,24 +249,27 @@ class BLEController extends GetxController {
               Future.delayed(const Duration(milliseconds: 100), () {
                 Get.to(() => const HomePageWidget());
                 
-                var connectedsnackbar = Get.snackbar(
-                  "Connected",
-                  "The device is now connected.",
-                  animationDuration: const Duration(milliseconds: 200),
-                  borderRadius: 2,
-                  icon: const Icon(Icons.bluetooth),
-                  snackPosition: SnackPosition.BOTTOM,
-                  duration: const Duration(seconds: 2),
-                  margin: const EdgeInsets.all(20),
-                  backgroundColor: const Color.fromARGB(255, 30, 82, 40),
-                  dismissDirection: DismissDirection.horizontal,
-                );
-                
+                if (_prefs?.getBool("settings/general/inappnotifications") ?? true) {
+                  activesnackbar = Get.snackbar(
+                    "Connected",
+                    "The device is now connected.",
+                    animationDuration: const Duration(milliseconds: 200),
+                    borderRadius: 2,
+                    icon: const Icon(Icons.bluetooth),
+                    snackPosition: SnackPosition.BOTTOM,
+                    duration: const Duration(seconds: 2),
+                    margin: const EdgeInsets.all(20),
+                    backgroundColor: const Color.fromARGB(255, 30, 82, 40),
+                    dismissDirection: DismissDirection.horizontal,
+                  );
+                }
               });
             } else {
               print("LOG: Not a valid GatorByte device.");
 
-              var connectedsnackbar = Get.snackbar(
+              
+              if (_prefs?.getBool("settings/general/inappnotifications") ?? true) {
+                activesnackbar = Get.snackbar(
                   "Connected",
                   "The device is now connected. However, this is not a valid device.",
                   animationDuration: const Duration(milliseconds: 200),
@@ -272,6 +281,7 @@ class BLEController extends GetxController {
                   backgroundColor: const Color.fromARGB(255, 30, 82, 40),
                   dismissDirection: DismissDirection.horizontal,
                 );
+              }
             }
             
 
@@ -322,18 +332,21 @@ class BLEController extends GetxController {
                     Future.delayed(const Duration(milliseconds: 200));
 
                     try {
-                      Get.snackbar(
-                        "Notification",
-                        "The device has disconnected.${reconnect && disconnectionreason == "device" ? " Waiting for the device for reconnection." : ""}",
-                        animationDuration: const Duration(milliseconds: 200),
-                        borderRadius: 2,
-                        icon: const Icon(Icons.bluetooth_disabled),
-                        snackPosition: SnackPosition.BOTTOM,
-                        duration: const Duration(seconds: 3),
-                        margin: const EdgeInsets.all(20),
-                        backgroundColor: const Color.fromARGB(255, 94, 80, 13),
-                        dismissDirection: DismissDirection.horizontal,
-                      );
+                      
+                      if (_prefs?.getBool("settings/general/inappnotifications") ?? true) {
+                        activesnackbar = Get.snackbar(
+                          "Notification",
+                          "The device has disconnected.${reconnect && disconnectionreason == "device" ? " Waiting for the device for reconnection." : ""}",
+                          animationDuration: const Duration(milliseconds: 200),
+                          borderRadius: 2,
+                          icon: const Icon(Icons.bluetooth_disabled),
+                          snackPosition: SnackPosition.BOTTOM,
+                          duration: const Duration(seconds: 3),
+                          margin: const EdgeInsets.all(20),
+                          backgroundColor: const Color.fromARGB(255, 94, 80, 13),
+                          dismissDirection: DismissDirection.horizontal,
+                        );
+                      }
 
                       statelistener!.cancel();
                       subscription!.cancel();

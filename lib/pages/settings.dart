@@ -83,6 +83,14 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                 ),
 
+                SettingsSwitchItem(
+                  label: "In-app notifications",
+                  value: _prefs?.getBool("settings/general/inappnotifications") ?? true,
+                  onChanged: (bool newvalue) async {
+                    await _prefs?.setBool("settings/general/inappnotifications", newvalue);
+                  },
+                ),
+
                 SettingsDropdownWidget(
                   label: "Open in page",
                   description: "Select which page to open when this application opens.",

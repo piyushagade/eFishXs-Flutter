@@ -35,7 +35,7 @@ class _SettingsSwitchItemState extends State<SettingsSwitchItem> {
         borderRadius: BorderRadius.circular(5)
       ),
       margin: const EdgeInsets.only(left:  25, right:  25, top:  10),
-      padding: const EdgeInsets.fromLTRB(12, 0, 12, 6),
+      padding: const EdgeInsets.fromLTRB(12, 0, 12, 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
