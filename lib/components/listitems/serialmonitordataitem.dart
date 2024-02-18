@@ -42,12 +42,12 @@ class _SerialMonitorItemState extends State<SerialMonitorItem> {
     double width = mediawidth - 160;
 
     if (mediawidth >= 600) {
-      width = mediawidth - 170;
+      width = mediawidth - 180;
     } else if (mediawidth >= 400) {
-      width = mediawidth - 160;
+      width = mediawidth - 170;
     }
     else if (mediawidth < 400) {
-      width = mediawidth - 150;
+      width = mediawidth - 165;
     }
 
     Widget body = SizedBox(
@@ -65,8 +65,7 @@ class _SerialMonitorItemState extends State<SerialMonitorItem> {
           style: TextStyle(
             color: color,
             fontSize: fontsizes[
-                    _prefs?.getInt("settings/serialmonitor/fontsize") ??
-                        3] +
+                    _prefs?.getInt("settings/serialmonitor/fontsize") ?? 3] +
                 3,
           ),
         ),

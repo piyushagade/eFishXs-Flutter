@@ -26,8 +26,6 @@ class _DevicesPageState extends State<DevicesPage> {
     final controller = Get.put(BLEController(
       onDisconnect: () {},
     ));
-    
-    // final controller = Get.find<BLEController>();
 
     // Disconnect from any previosuly connected devices
     controller.disconnectalldevices();

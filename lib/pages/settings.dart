@@ -1,4 +1,7 @@
+// ignore_for_file: avoid_print
+
 import 'package:efishxs/theme/themeprovider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import '../components/switch/settingsdropdown.dart';
@@ -18,6 +21,16 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   SharedPreferences? _prefs;
   late Future<void> _prefsFuture;
+
+  Future<PermissionStatus?> requestMultiplePermissions() async {
+
+    print ("LOG: Requesting location permission");
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.location,
+    ].request();
+
+    return statuses[Permission.location];
+  }
 
   @override
   void initState() {
@@ -102,6 +115,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
                 SettingsSwitchItem(
                   label: "In-app notifications",
+                  description: "These are shown when a device connects or disconnects.",
                   value: _prefs?.getBool("settings/general/inappnotifications") ?? true,
                   onChanged: (bool newvalue) async {
                     await _prefs?.setBool("settings/general/inappnotifications", newvalue);
@@ -147,6 +161,28 @@ class _SettingsPageState extends State<SettingsPage> {
                   value: _prefs?.getBool("settings/serialmonitor/autoscroll") ?? true,
                   onChanged: (bool newvalue) async {
                     await _prefs?.setBool("settings/serialmonitor/autoscroll", newvalue);
+                  },
+                ),
+                
+                SettingsSwitchItem(
+                  label: "Log to file",
+                  description: "Enable automatic saving every serial monitor log to a local file.",
+                  value: _prefs?.getBool("settings/serialmonitor/logtofile") ?? true,
+                  onChanged: (bool newvalue) async {
+                    await _prefs?.setBool("settings/serialmonitor/logtofile", newvalue);
+                  },
+                ),
+
+                SettingsSwitchItem(
+                  label: "Enable GPS logging",
+                  description: "Tag each serial monitor log with a GPS location",
+                  value: _prefs?.getBool("settings/serialmonitor/gpslogging") ?? false,
+                  onChanged: (bool newvalue) async {
+                    
+                    try {
+                      _prefs?.setBool("settings/serialmonitor/gpslogging", newvalue);
+                    }
+                    catch (e) {}
                   },
                 ),
         

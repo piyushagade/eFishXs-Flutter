@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:efishxs/components/listitems/serialmonitordataitem.dart';
 import 'package:efishxs/components/listitems/serialmonitortimeitem.dart';
@@ -8,9 +9,11 @@ import 'package:efishxs/pages/home.dart';
 import 'package:efishxs/pages/serialmonitor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -55,6 +58,122 @@ class BLEController extends GetxController {
   
   SharedPreferences? _prefs;
   late Future<void> _prefsFuture;
+
+  Future<List> readlog() async {
+    List<dynamic> json = [];
+    
+    final directory = await getApplicationDocumentsDirectory();
+    final String fileName = '${DateFormat("yy-MM-dd").format(DateTime.now())}.json';
+    File file = File('${directory.path}/$fileName');
+
+    try {
+      // Read the existing JSON data from the file if it exists
+      if (file.existsSync()) {
+        String fileContent = file.readAsStringSync();
+        json = jsonDecode(fileContent);
+      }
+      print ("LOG: File read successfully");
+      print ("LOG: ${jsonEncode(json)}");
+    }
+    catch (e) {
+      print('LOG: Failed to write file: $e');
+    }
+
+    return json;
+  }
+
+  Future<String> getlocation() async {
+    print("LOG: Getting location data.");
+    String locationdata = "";
+
+    try {
+      print("LOG: Getting last known location.");
+      Position? lastposition = await Geolocator.getLastKnownPosition();
+      locationdata = '${lastposition?.latitude}, ${lastposition?.longitude}';
+
+      // print("LOG: Getting current location.");
+      // Position position = await Geolocator.getCurrentPosition();
+      // locationdata = '${position?.latitude}, ${position?.longitude}';
+      print("LOG: All position information acquired.");
+
+      return locationdata;
+    } catch (e) {
+      locationdata = 'Error getting location: $e';
+    }
+
+    print("LOG: " + locationdata);
+    return locationdata;
+  }
+
+  Future<void> logtostorage(String content) async {
+    
+    if (_prefs?.getBool("settings/serialmonitor/logtofile") ?? true){
+      final String fileName = '${DateFormat("yy-MM-dd").format(DateTime.now())}.json';
+
+      try {
+        // Get the directory where the file will be saved
+        final directory = await getApplicationDocumentsDirectory();
+        File file = File('${directory.path}/$fileName');
+
+        List<dynamic> json = [];
+        Map<String, dynamic> line = {};
+        line["content"] = content;
+        line["timestamp"] = DateFormat("yy-MM-dd hh:mm:ss a").format(DateTime.now());
+        line["location"] = _prefs?.getBool("settings/serialmonitor/gpslogging") ?? true  ? await getlocation() : "GPS logging disabled.";
+        line["device"] = connecteddevice.name.trim();
+
+        if (!file.existsSync()) {
+          // If the file doesn't exist, create it and write the line
+          file.createSync(recursive: true);
+          file.writeAsStringSync('[]');
+          print('LOG: File created and line appended: $fileName');
+        } 
+        else {
+
+          // Read file
+          String fileContent = file.readAsStringSync();
+          json = jsonDecode(fileContent);
+        }
+
+        // Add current line to the list
+        json.add(line);
+
+        // If the file exists, append the line
+        file.writeAsStringSync(jsonEncode(json));
+        print('LOG: Line appended to existing file: ${file.path}');
+
+
+        print('LOG: Line added: ${jsonEncode(line)}');
+        print('LOG: Total lines: ${json.length}');
+
+      } catch (e) {
+        print('LOG: Failed to write file: $e');
+      }
+    }
+  }
+
+  Future<void> deletelogs() async {
+  try {
+    
+    // Get the directory where the file will be saved
+    Directory directory = await getApplicationDocumentsDirectory();
+    if (directory.existsSync()) {
+      List<FileSystemEntity> files = directory.listSync();
+
+      // Delete each file
+      files.forEach((file) {
+        if (file is File) {
+          file.deleteSync();
+          print('File deleted: ${file.path}');
+        }
+      });
+    } else {
+      print('Directory does not exist.');
+    }
+  } catch (e) {
+    print('Failed to delete files: $e');
+  }
+}
 
   @override
   void onInit() {
@@ -123,7 +242,9 @@ class BLEController extends GetxController {
     return isAvailable.value;
   }
 
+  // Returned
   Future<void> scandevices() async {
+
     try { statusText.value = "Found $devicesCount device(s)."; } catch (e) {}
     WidgetsBinding.instance!.addPostFrameCallback((_) {
         statusText.value = "Scanning for nearby devices";
@@ -134,33 +255,29 @@ class BLEController extends GetxController {
         isScanning.value = true;
       });
 
-      // Check Bluetooth permissions
-      var blePermission = await Permission.bluetoothScan.status;
-      if (blePermission.isDenied) {
-        if (await Permission.bluetoothScan.request().isGranted &&
-            await Permission.bluetoothConnect.request().isGranted) {
-        }
-      } else {}
-
       // Start scanning
-      await ble.startScan(timeout: const Duration(seconds: 5));
+      try {
+        
+        await ble.startScan(timeout: const Duration(seconds: 5));
 
-      // Listen to scan results
-      subscription = ble.scanResults.listen((results) {
-        devicesCount = 0;
-        for (ScanResult result in results) {
-          if (result.device.name.isNotEmpty) {
-            devicesCount++;
+        // Listen to scan results
+        subscription = ble.scanResults.listen((results) {
+          devicesCount = 0;
+          for (ScanResult result in results) {
+            if (result.device.name.isNotEmpty) {
+              devicesCount++;
+            }
           }
-        }
-      });
+        });
 
-      // Stop scanning after 5 seconds
-      await ble.stopScan();
-      statusText.value = "Found $devicesCount device(s).";
-      print("LOG: Scanning stopped.");
-      isScanning.value = false;
-      subscription.cancel();
+        // Stop scanning after 5 seconds
+        await ble.stopScan();
+        statusText.value = "Found $devicesCount device(s).";
+        print("LOG: Scanning stopped.");
+        isScanning.value = false;
+        subscription.cancel();
+      }
+      catch (e) {}
     }
 
     else {
@@ -410,6 +527,9 @@ class BLEController extends GetxController {
             ),
           );
 
+          // Log to file
+          logtostorage(stringbuffer.trimRight());
+
           // Reset buffer
           stringbuffer = "";
         }
@@ -438,14 +558,20 @@ class BLEController extends GetxController {
     return connected.value;
   }
 
+  // Returned
   void disconnectalldevices() async {
+
     try { reconnectiontimer.cancel(); } catch (e) {}
 
-    List<BluetoothDevice> connectedDevices = await ble.connectedDevices;
-    // Disconnect from each connected device
-    for (BluetoothDevice device in connectedDevices) {
-      await device.disconnect();
+    try {
+      List<BluetoothDevice> connectedDevices = await ble.connectedDevices;
+      
+      // Disconnect from each connected device
+      for (BluetoothDevice device in connectedDevices) {
+        await device.disconnect();
+      }
     }
+    catch (e) {}
   }
 
   Stream<List<ScanResult>> get ScanResults => ble.scanResults;
