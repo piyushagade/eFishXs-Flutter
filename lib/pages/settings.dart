@@ -23,14 +23,12 @@ class _SettingsPageState extends State<SettingsPage> {
   SharedPreferences? _prefs;
   late Future<void> _prefsFuture;
 
-  Future<PermissionStatus?> requestMultiplePermissions() async {
-
-    print ("LOG: Requesting location permission");
+  Future<bool?> requestMultiplePermissions() async {
     Map<Permission, PermissionStatus> statuses = await [
-      Permission.location,
+      Permission.locationAlways,
     ].request();
 
-    return statuses[Permission.location];
+    return statuses[Permission.locationAlways]?.isGranted;
   }
 
   @override
@@ -86,6 +84,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     await _prefs?.setBool("settings/general/stayawake", newvalue);
                     setState(() {});
 
+                    WidgetsFlutterBinding.ensureInitialized();
                     if (newvalue) {
                       Wakelock.enable();
                     } else {
@@ -195,11 +194,22 @@ class _SettingsPageState extends State<SettingsPage> {
                   description: "Tag each serial monitor log with a GPS location",
                   value: _prefs?.getBool("settings/serialmonitor/gpslogging") ?? false,
                   onChanged: (bool newvalue) async {
-                    
-                    try {
-                      _prefs?.setBool("settings/serialmonitor/gpslogging", newvalue);
+
+                    if (newvalue) {
+                      requestMultiplePermissions().then((permissiongranted) {
+                        try {
+                          _prefs?.setBool("settings/serialmonitor/gpslogging", newvalue);
+                        }
+                        catch (e) {}
+                      });
                     }
-                    catch (e) {}
+                    
+                    else {
+                      try {
+                        _prefs?.setBool("settings/serialmonitor/gpslogging", newvalue);
+                      }
+                      catch (e) {}
+                    }
                   },
                 ),
         

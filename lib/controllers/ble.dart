@@ -119,7 +119,7 @@ class BLEController extends GetxController {
         Map<String, dynamic> line = {};
         line["content"] = content;
         line["timestamp"] = DateFormat("yy-MM-dd hh:mm:ss a").format(DateTime.now());
-        line["location"] = _prefs?.getBool("settings/serialmonitor/gpslogging") ?? true  ? await getlocation() : "GPS logging disabled.";
+        line["location"] = _prefs?.getBool("settings/serialmonitor/gpslogging") ?? false  ? await getlocation() : "GPS logging disabled.";
         line["device"] = connecteddevice.name.trim();
 
         if (!file.existsSync()) {

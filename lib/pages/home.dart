@@ -41,7 +41,10 @@ class _HomePageWidgetState extends State<HomePageWidget> {
       _prefs = value; 
       navigatebottombar(_prefs?.getInt("settings/general/openinpage") ?? 0);
 
-      if (_prefs?.getBool("settings/general/stayawake") ?? true) Wakelock.enable();
+      if (_prefs?.getBool("settings/general/stayawake") ?? true) {
+        WidgetsFlutterBinding.ensureInitialized();
+        Wakelock.enable();
+      }
     });
   }
   
