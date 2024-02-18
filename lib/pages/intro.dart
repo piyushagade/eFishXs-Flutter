@@ -1,8 +1,8 @@
 // ignore_for_file: avoid_print
 
-import 'package:efishxs/globals/strings.dart';
 import 'package:efishxs/pages/devices.dart';
 import 'package:flutter/material.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class IntroPage extends StatelessWidget {
@@ -32,7 +32,7 @@ class IntroPage extends StatelessWidget {
         Future.delayed(const Duration(seconds: 2), () {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => DevicesPage()),
+            MaterialPageRoute(builder: (context) => const DevicesPage()),
           );
         });
       }

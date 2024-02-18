@@ -1,4 +1,3 @@
-import 'dart:async';
 
 import 'package:efishxs/components/ui/homenavbar.dart';
 import 'package:efishxs/controllers/ble.dart';
@@ -24,7 +23,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
   final GlobalKey bottomNavBarKey = GlobalKey();
 
   int? _selectedtabindex = 0;
-  bool _bl_connection_status = true;
+  final bool _bl_connection_status = true;
 
   void navigatebottombar (int index) {
     setState(() {
@@ -32,7 +31,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     });
   }
 
-  final List<Widget> _pages = [const DashboardWidget(), SerialMonitorPage(), const SettingsPage(), const NewRecordPage()];
+  final List<Widget> _pages = [const DashboardWidget(), const SerialMonitorPage(), const SettingsPage(), const NewRecordPage()];
 
   @override
   void initState() {
@@ -119,7 +118,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                       icon: const Icon(Icons.devices_rounded),
                       onPressed: () {
                         controller.disconnectdevice();
-                        Get.off(() => DevicesPage());
+                        Get.off(() => const DevicesPage());
                       },
                     ),
                   ],

@@ -1,15 +1,13 @@
-import 'dart:ffi';
 
 import 'package:efishxs/controllers/ble.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SerialMonitorItem extends StatefulWidget {
   final String data;
   final String type;
-  SerialMonitorItem({super.key, required this.data, this.type = "incoming"});
+  const SerialMonitorItem({super.key, required this.data, this.type = "incoming"});
 
   @override
   State<SerialMonitorItem> createState() => _SerialMonitorItemState();

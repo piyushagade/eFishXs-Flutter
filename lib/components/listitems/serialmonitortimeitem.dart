@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SerialMonitorTimeItem extends StatefulWidget {
 
-  SerialMonitorTimeItem({super.key});
+  const SerialMonitorTimeItem({super.key});
 
   @override
   State<SerialMonitorTimeItem> createState() => _SerialMonitorTimeItemState();

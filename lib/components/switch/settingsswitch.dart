@@ -7,12 +7,12 @@ class SettingsSwitchItem extends StatefulWidget {
   final onChanged;
 
   const SettingsSwitchItem({
-    Key? key,
+    super.key,
     required this.label,
     required this.value,
     required this.onChanged,
     this.description = "",
-  }) : super(key: key);
+  });
 
   @override
   _SettingsSwitchItemState createState() => _SettingsSwitchItemState();

@@ -4,17 +4,15 @@ import 'dart:io';
 
 import 'package:efishxs/components/listitems/serialmonitordataitem.dart';
 import 'package:efishxs/components/listitems/serialmonitortimeitem.dart';
-import 'package:efishxs/pages/devices.dart';
 import 'package:efishxs/pages/home.dart';
 import 'package:efishxs/pages/serialmonitor.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:intl/intl.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class BLEController extends GetxController {
@@ -101,7 +99,7 @@ class BLEController extends GetxController {
       locationdata = 'Error getting location: $e';
     }
 
-    print("LOG: " + locationdata);
+    print("LOG: $locationdata");
     return locationdata;
   }
 
@@ -161,12 +159,12 @@ class BLEController extends GetxController {
       List<FileSystemEntity> files = directory.listSync();
 
       // Delete each file
-      files.forEach((file) {
+      for (var file in files) {
         if (file is File) {
           file.deleteSync();
           print('File deleted: ${file.path}');
         }
-      });
+      }
     } else {
       print('Directory does not exist.');
     }
@@ -179,6 +177,7 @@ class BLEController extends GetxController {
   void onInit() {
     print('LOG: BLEController onInit');
     isBluetoothAvailable();
+
     super.onInit();
     
     _prefsFuture = SharedPreferences.getInstance().then((value) {
@@ -198,8 +197,8 @@ class BLEController extends GetxController {
             scandevices();
           });
 
-          serialtimewidgetarray.add(SerialMonitorTimeItem());
-          serialdatawidgetarray.add(SerialMonitorItem(
+          serialtimewidgetarray.add(const SerialMonitorTimeItem());
+          serialdatawidgetarray.add(const SerialMonitorItem(
               data: "Bluetooth turned ON",
               type: "status",
             ),
@@ -213,8 +212,8 @@ class BLEController extends GetxController {
             scandevices();
           });
           
-          serialtimewidgetarray.add(SerialMonitorTimeItem());
-          serialdatawidgetarray.add(SerialMonitorItem(
+          serialtimewidgetarray.add(const SerialMonitorTimeItem());
+          serialdatawidgetarray.add(const SerialMonitorItem(
               data: "Bluetooth turned OFF",
               type: "status",
             ),
@@ -232,13 +231,13 @@ class BLEController extends GetxController {
 
   Future<bool> isBluetoothOn() async {
     isOn.value = await ble.isOn;
-    print("LOG: Bluetooth is " + (isOn.value ? "ON" : "OFF"));
+    print("LOG: Bluetooth is ${isOn.value ? "ON" : "OFF"}");
     return isOn.value;
   }
 
   Future<bool> isBluetoothAvailable() async {
     isAvailable.value = await ble.isAvailable;
-    print("LOG: Bluetooth " + (isOn.value ? "is" : "is not") + " available");
+    print("LOG: Bluetooth ${isOn.value ? "is" : "is not"} available");
     return isAvailable.value;
   }
 
@@ -246,12 +245,12 @@ class BLEController extends GetxController {
   Future<void> scandevices() async {
 
     try { statusText.value = "Found $devicesCount device(s)."; } catch (e) {}
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
         statusText.value = "Scanning for nearby devices";
     });
 
     if (!isScanning.value) {
-      WidgetsBinding.instance!.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         isScanning.value = true;
       });
 
@@ -291,43 +290,60 @@ class BLEController extends GetxController {
     print('LOG: Connecting to device: ${device.name}');
 
     if (_prefs?.getBool("settings/general/inappnotifications") ?? true) {
-      activesnackbar = Get.snackbar(
-        "Connecting to your device",
-        "Please wait while we establish a connection.",
-        animationDuration: const Duration(milliseconds: 200),
-        borderRadius: 2,
-        icon: const Icon(Icons.bluetooth_disabled),
-        snackPosition: SnackPosition.BOTTOM,
-        duration: const Duration(seconds: 5),
-        margin: const EdgeInsets.all(20),
-        backgroundColor: const Color.fromARGB(255, 74, 74, 73),
-        dismissDirection: DismissDirection.horizontal,
+
+      // activesnackbar = Get.snackbar(
+      //   "Connecting to your device",
+      //   "Please wait while we establish a connection.",
+      //   animationDuration: const Duration(milliseconds: 200),
+      //   borderRadius: 2,
+      //   icon: const Icon(Icons.bluetooth_disabled),
+      //   snackPosition: SnackPosition.BOTTOM,
+      //   duration: const Duration(seconds: 5),
+      //   margin: const EdgeInsets.all(20),
+      //   backgroundColor: const Color.fromARGB(255, 74, 74, 73),
+      //   dismissDirection: DismissDirection.horizontal,
+      // );
+
+      showSimpleNotification(
+        const Text(
+          "Please wait while we establish a connection.",
+          style: TextStyle(color: Colors.white),
+        ),
+        background: const Color.fromARGB(255, 74, 74, 73),
       );
     }
 
     try {
-      await connecteddevice!.disconnect();
+      await connecteddevice.disconnect();
     } catch (e) {
       print(e);
     }
 
     try {
       final connecttimeouttimer = Timer(const Duration(seconds: 5), () async {
-        try { activesnackbar.close(); } catch (e) {}
+        // try { activesnackbar.close(); } catch (e) {}
         isConnecting.value = false;
 
         if (_prefs?.getBool("settings/general/inappnotifications") ?? true) {
-          activesnackbar = Get.snackbar(
-            "Bluetooth error",
-            "We couldn't establish a connection. Likely, the device is not powered on or out of range.",
-            animationDuration: const Duration(milliseconds: 200),
-            borderRadius: 2,
-            icon: const Icon(Icons.bluetooth_disabled),
-            snackPosition: SnackPosition.BOTTOM,
-            duration: const Duration(seconds: 5),
-            margin: const EdgeInsets.all(20),
-            backgroundColor: const Color.fromARGB(255, 73, 29, 20),
-            dismissDirection: DismissDirection.horizontal,
+          // activesnackbar = Get.snackbar(
+          //   "Bluetooth error",
+          //   "We couldn't establish a connection. Likely, the device is not powered on or out of range.",
+          //   animationDuration: const Duration(milliseconds: 200),
+          //   borderRadius: 2,
+          //   icon: const Icon(Icons.bluetooth_disabled),
+          //   snackPosition: SnackPosition.BOTTOM,
+          //   duration: const Duration(seconds: 5),
+          //   margin: const EdgeInsets.all(20),
+          //   backgroundColor: const Color.fromARGB(255, 73, 29, 20),
+          //   dismissDirection: DismissDirection.horizontal,
+          // );
+
+          showSimpleNotification(
+            const Text(
+              "We couldn't establish a connection. Likely, the device is not powered on or out of range.",
+              style: TextStyle(color: Colors.white),
+            ),
+            background: const Color.fromARGB(255, 73, 29, 20),
           );
         }
 
@@ -343,7 +359,7 @@ class BLEController extends GetxController {
       final connectionuitimeouttimer = Timer(
         const Duration(seconds: 1),
         () async {
-          try { activesnackbar.close(); } catch (e) {}
+          // try { activesnackbar.close(); } catch (e) {}
           isConnecting.value = false;
           try { reconnectiontimer.cancel(); } catch (e) {}
 
@@ -367,17 +383,25 @@ class BLEController extends GetxController {
                 Get.off(() => const HomePageWidget());
                 
                 if (_prefs?.getBool("settings/general/inappnotifications") ?? true) {
-                  activesnackbar = Get.snackbar(
-                    "Connected",
-                    "The device is now connected.",
-                    animationDuration: const Duration(milliseconds: 200),
-                    borderRadius: 2,
-                    icon: const Icon(Icons.bluetooth),
-                    snackPosition: SnackPosition.BOTTOM,
-                    duration: const Duration(seconds: 2),
-                    margin: const EdgeInsets.all(20),
-                    backgroundColor: const Color.fromARGB(255, 30, 82, 40),
-                    dismissDirection: DismissDirection.horizontal,
+                  // activesnackbar = Get.snackbar(
+                  //   "Connected",
+                  //   "The device is now connected.",
+                  //   animationDuration: const Duration(milliseconds: 200),
+                  //   borderRadius: 2,
+                  //   icon: const Icon(Icons.bluetooth),
+                  //   snackPosition: SnackPosition.BOTTOM,
+                  //   duration: const Duration(seconds: 2),
+                  //   margin: const EdgeInsets.all(20),
+                  //   backgroundColor: const Color.fromARGB(255, 30, 82, 40),
+                  //   dismissDirection: DismissDirection.horizontal,
+                  // );
+
+                  showSimpleNotification(
+                    const Text(
+                      "The device is now connected.",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    background: const Color.fromARGB(255, 30, 82, 40),
                   );
                 }
               });
@@ -386,33 +410,41 @@ class BLEController extends GetxController {
 
               
               if (_prefs?.getBool("settings/general/inappnotifications") ?? true) {
-                activesnackbar = Get.snackbar(
-                  "Connected",
-                  "The device is now connected. However, this is not a valid device.",
-                  animationDuration: const Duration(milliseconds: 200),
-                  borderRadius: 2,
-                  icon: const Icon(Icons.bluetooth),
-                  snackPosition: SnackPosition.BOTTOM,
-                  duration: const Duration(seconds: 2),
-                  margin: const EdgeInsets.all(20),
-                  backgroundColor: const Color.fromARGB(255, 30, 82, 40),
-                  dismissDirection: DismissDirection.horizontal,
+                // activesnackbar = Get.snackbar(
+                //   "Connected",
+                //   "The device is now connected. However, this is not a valid device.",
+                //   animationDuration: const Duration(milliseconds: 200),
+                //   borderRadius: 2,
+                //   icon: const Icon(Icons.bluetooth),
+                //   snackPosition: SnackPosition.BOTTOM,
+                //   duration: const Duration(seconds: 2),
+                //   margin: const EdgeInsets.all(20),
+                //   backgroundColor: const Color.fromARGB(255, 30, 82, 40),
+                //   dismissDirection: DismissDirection.horizontal,
+                // );
+
+                showSimpleNotification(
+                  const Text(
+                    "The device is now connected. However, this is not a valid device.",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  background: const Color.fromARGB(255, 30, 82, 40),
                 );
               }
             }
             
             connecteddevice = device;
             connected.value = true;
-            serialtimewidgetarray.add(SerialMonitorTimeItem());
+            serialtimewidgetarray.add(const SerialMonitorTimeItem());
             serialdatawidgetarray.add(
-              SerialMonitorItem(
+              const SerialMonitorItem(
                 data: "Device connected",
                 type: "status",
               ),
             );
 
             // Read the value of the target characteristic
-            if (targetservice != null && targetcharacteristic != null) {
+            if (targetcharacteristic != null) {
               listenfordata();
             }
 
@@ -421,21 +453,21 @@ class BLEController extends GetxController {
               const Duration(seconds: 1),
               () {
                 statelistener = device.state.listen((event) async {
-                  print("LOG: State: " + event.toString());
+                  print("LOG: State: $event");
 
                   // Handle disconnections
                   if (event == BluetoothDeviceState.disconnected ||
                       event == BluetoothDeviceState.disconnecting) {
                     try {
                       if (disconnectionreason != "user") disconnectionreason = "device";
-                      print('LOG: Disconnecting from device: ${connecteddevice.name.trim()}' + ". Reason: " + disconnectionreason + ".");
+                      print('LOG: Disconnecting from device: ${connecteddevice.name.trim()}' ". Reason: " + disconnectionreason + ".");
                       await connecteddevice.disconnect();
                       connected.value = false;
 
 
-                      serialtimewidgetarray.add(SerialMonitorTimeItem());
+                      serialtimewidgetarray.add(const SerialMonitorTimeItem());
                       serialdatawidgetarray.add(
-                        SerialMonitorItem(
+                        const SerialMonitorItem(
                           data: "Device disconnected",
                           type: "status",
                         ),
@@ -450,23 +482,31 @@ class BLEController extends GetxController {
                     try {
                       
                       if (_prefs?.getBool("settings/general/inappnotifications") ?? true) {
-                        activesnackbar = Get.snackbar(
-                          "Notification",
-                          "The device has disconnected.${reconnect && disconnectionreason == "device" ? " Waiting for the device for reconnection." : ""}",
-                          animationDuration: const Duration(milliseconds: 200),
-                          borderRadius: 2,
-                          icon: const Icon(Icons.bluetooth_disabled),
-                          snackPosition: SnackPosition.BOTTOM,
-                          duration: const Duration(seconds: 3),
-                          margin: const EdgeInsets.all(20),
-                          backgroundColor: const Color.fromARGB(255, 94, 80, 13),
-                          dismissDirection: DismissDirection.horizontal,
+                        // activesnackbar = Get.snackbar(
+                        //   "Notification",
+                        //   "The device has disconnected.${reconnect && disconnectionreason == "device" ? " Waiting for the device for reconnection." : ""}",
+                        //   animationDuration: const Duration(milliseconds: 200),
+                        //   borderRadius: 2,
+                        //   icon: const Icon(Icons.bluetooth_disabled),
+                        //   snackPosition: SnackPosition.BOTTOM,
+                        //   duration: const Duration(seconds: 3),
+                        //   margin: const EdgeInsets.all(20),
+                        //   backgroundColor: const Color.fromARGB(255, 94, 80, 13),
+                        //   dismissDirection: DismissDirection.horizontal,
+                        // );
+
+                        showSimpleNotification(
+                          Text(
+                            "The device has disconnected. ${reconnect && disconnectionreason == "device" ? " Waiting for the device for reconnection." : ""}",
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          background: const Color.fromARGB(255, 94, 80, 13),
                         );
                       }
 
-                      statelistener!.cancel();
-                      subscription!.cancel();
-                      datastreamlistener!.cancel();
+                      statelistener.cancel();
+                      subscription.cancel();
+                      datastreamlistener.cancel();
                       onDisconnect();
                       connected.value = false;
                       print("LOG: Device disconnected.");
@@ -491,7 +531,7 @@ class BLEController extends GetxController {
             
           }
           catch (e) {
-            print ("LOGERR: " + e.toString());
+            print ("LOGERR: $e");
           }
         },
       );
@@ -520,7 +560,7 @@ class BLEController extends GetxController {
         if (data.endsWith(lineendingchar)) {
           serialdataarray.add(stringbuffer);
 
-          serialtimewidgetarray.add(SerialMonitorTimeItem());
+          serialtimewidgetarray.add(const SerialMonitorTimeItem());
           serialdatawidgetarray.add(SerialMonitorItem(
               data: stringbuffer.trimRight(),
               type: "incoming",
@@ -536,7 +576,7 @@ class BLEController extends GetxController {
       });
     } catch (e) {
       // Handle errors
-      print("LOGERR: " + e.toString());
+      print("LOGERR: $e");
     }
   }
 
@@ -592,7 +632,7 @@ class BLEController extends GetxController {
       await targetcharacteristic?.write(utf8.encode(data));
     }
     catch (e) {
-      print("LOGERR: " + e.toString());
+      print("LOGERR: $e");
     }
     return;
   }

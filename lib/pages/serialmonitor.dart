@@ -1,7 +1,5 @@
 // ignore_for_file: avoid_print
 
-import 'dart:convert';
-import 'dart:io';
 import 'dart:async';
 
 import 'package:efishxs/components/buttons/button.dart';
@@ -12,8 +10,6 @@ import 'package:efishxs/controllers/ble.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SerialMonitorPage extends StatefulWidget {
@@ -35,7 +31,7 @@ class _SerialMonitorPageState extends State<SerialMonitorPage> {
   void sendcommand(String command) {
     controller.senddata(command);
 
-    controller.serialtimewidgetarray.add(SerialMonitorTimeItem());
+    controller.serialtimewidgetarray.add(const SerialMonitorTimeItem());
     controller.serialdatawidgetarray.add(SerialMonitorItem(
       data: command,
       type: "outgoing",
@@ -143,8 +139,8 @@ class _SerialMonitorPageState extends State<SerialMonitorPage> {
                       onTap: () {
                         controller.serialtimewidgetarray.value = [];
                         controller.serialdatawidgetarray.value = [];
-                        controller.serialtimewidgetarray.add(SerialMonitorTimeItem());
-                        controller.serialdatawidgetarray.add(SerialMonitorItem(
+                        controller.serialtimewidgetarray.add(const SerialMonitorTimeItem());
+                        controller.serialdatawidgetarray.add(const SerialMonitorItem(
                             data: "Monitor cleared", type: "status"));
                       }),
               

@@ -5,10 +5,9 @@ import 'package:efishxs/controllers/ble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class DevicesPage extends StatefulWidget {
-  DevicesPage({Key? key}) : super(key: key);
+  const DevicesPage({super.key});
 
   @override
   State<DevicesPage> createState() => _DevicesPageState();
@@ -115,7 +114,7 @@ class _DevicesPageState extends State<DevicesPage> {
                     margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     child: const Column (
                       children: [
-                        const Text("The device does not support Bluetooth."),
+                        Text("The device does not support Bluetooth."),
                       ],
                     ),
                   ),

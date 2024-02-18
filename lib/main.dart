@@ -2,6 +2,7 @@ import 'package:efishxs/theme/themeprovider.dart';
 import 'package:efishxs/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:provider/provider.dart';
 import 'package:efishxs/pages/intro.dart';
 import 'package:flutter/services.dart';
@@ -29,14 +30,16 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-    @override
-    Widget build(BuildContext context) {
-        return GetMaterialApp(
-            debugShowCheckedModeBanner: false,
-            showPerformanceOverlay: false,                        
-            home: const IntroPage(),
-            theme: lightmode,
-            darkTheme: darkgreymode,
-        );
-    }
+  @override
+  Widget build(BuildContext context) {
+    return OverlaySupport.global(
+      child: GetMaterialApp(
+        debugShowCheckedModeBanner: false,
+        showPerformanceOverlay: false,
+        home: const IntroPage(),
+        theme: lightmode,
+        darkTheme: darkgreymode,
+      ),
+    );
+  }
 }
