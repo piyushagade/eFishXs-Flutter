@@ -3,6 +3,7 @@
 import 'package:efishxs/theme/themeprovider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:wakelock/wakelock.dart';
 
 import '../components/switch/settingsdropdown.dart';
 import '../components/switch/settingsswitch.dart';
@@ -74,6 +75,22 @@ class _SettingsPageState extends State<SettingsPage> {
                   onChanged: (bool newvalue) async {
                     await _prefs?.setBool("settings/general/showheading", newvalue);
                     setState(() {});
+                  },
+                ),
+
+                SettingsSwitchItem(
+                  label: "Stay awake",
+                  description: "Keep your screen on while using this app.",
+                  value: _prefs?.getBool("settings/general/stayawake") ?? true,
+                  onChanged: (bool newvalue) async {
+                    await _prefs?.setBool("settings/general/stayawake", newvalue);
+                    setState(() {});
+
+                    if (newvalue) {
+                      Wakelock.enable();
+                    } else {
+                      Wakelock.disable();
+                    }
                   },
                 ),
 

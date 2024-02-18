@@ -8,9 +8,9 @@ import 'package:efishxs/pages/newrecord.dart';
 import 'package:efishxs/pages/serialmonitor.dart';
 import 'package:efishxs/pages/settings.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wakelock/wakelock.dart';
 
 class HomePageWidget extends StatefulWidget {
   const HomePageWidget({super.key});
@@ -40,6 +40,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     SharedPreferences.getInstance().then((value) {
       _prefs = value; 
       navigatebottombar(_prefs?.getInt("settings/general/openinpage") ?? 0);
+
+      if (_prefs?.getBool("settings/general/stayawake") ?? true) Wakelock.enable();
     });
   }
   
