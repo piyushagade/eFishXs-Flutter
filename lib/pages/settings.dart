@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:efishxs/theme/themeprovider.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:wakelock/wakelock.dart';
@@ -194,6 +195,19 @@ class _SettingsPageState extends State<SettingsPage> {
                   description: "Tag each serial monitor log with a GPS location",
                   value: _prefs?.getBool("settings/serialmonitor/gpslogging") ?? false,
                   onChanged: (bool newvalue) async {
+
+                    LocationPermission permission = await Geolocator.checkPermission();
+                    if (permission == LocationPermission.denied) {
+                      permission = await Geolocator.requestPermission();
+                      if (permission == LocationPermission.denied) {
+                        // Permissions are denied, next time you could try
+                        // requesting permissions again (this is also where
+                        // Android's shouldShowRequestPermissionRationale 
+                        // returned true. According to Android guidelines
+                        // your App should show an explanatory UI now.
+                        return Future.error('Location permissions are denied');
+                      }
+                    }
 
                     if (newvalue) {
                       requestMultiplePermissions().then((permissiongranted) {
