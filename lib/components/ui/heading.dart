@@ -19,9 +19,16 @@ class HeadingWidget extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 20,
               )),
-          Text(subheading,
-              textAlign: TextAlign.left,
-              style: TextStyle(fontSize: 14, color: Colors.grey[600])),
+          Opacity(
+            opacity: 0.8,
+            child: Text(subheading,
+                textAlign: TextAlign.left,
+              style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).colorScheme.inversePrimary,
+              ),
+            ),
+          ),
           const SizedBox(
             height: 6,
           ),
@@ -30,7 +37,7 @@ class HeadingWidget extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
             child: Divider(
               height: 8,
-              color: Theme.of(context).colorScheme.surface,
+              color: Theme.of(context).colorScheme.inverseSurface,
             ),
           ),
           SizedBox(height: marginBottom,),

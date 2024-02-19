@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, dead_code
 
 import 'package:efishxs/pages/devices.dart';
 import 'package:flutter/material.dart';
@@ -24,19 +24,17 @@ class IntroPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    requestMultiplePermissions().then((bool? permissiongranted) {
+    // requestMultiplePermissions().then((bool? permissiongranted) {
 
-      print ("LOG: BL permission granted: $permissiongranted");
+      // print ("LOG: BL permission granted: $permissiongranted");
 
-      if (permissiongranted ?? false) {
-        Future.delayed(const Duration(seconds: 2), () {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const DevicesPage()),
-          );
-        });
-      }
-    });
+      Future.delayed(const Duration(seconds: 2), () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const DevicesPage()),
+        );
+      });
+    // });
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
@@ -61,12 +59,15 @@ class IntroPage extends StatelessWidget {
 
               const SizedBox(height: 2),
 
-              Text("Loading configuration",
-                style: TextStyle(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 13,
-                  color: Theme.of(context).colorScheme.primary
-                )
+              Opacity(
+                opacity: 0.4,
+                child: Text("Loading configuration",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 13,
+                    color: Theme.of(context).colorScheme.inversePrimary
+                  )
+                ),
               )
           ],
         ),

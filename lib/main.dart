@@ -35,10 +35,8 @@ class _AppState extends State<App> {
     return OverlaySupport.global(
       child: GetMaterialApp(
         debugShowCheckedModeBanner: false,
-        showPerformanceOverlay: false,
         home: const IntroPage(),
-        theme: lightmode,
-        darkTheme: darkgreymode,
+        theme: Provider.of<ThemeProvider>(context, listen: true).themeData,
       ),
     );
   }

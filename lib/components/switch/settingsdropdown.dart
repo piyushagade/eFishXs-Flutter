@@ -37,7 +37,7 @@ class _SettingsDropdownWidgetState extends State<SettingsDropdownWidget> {
 
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(5)
       ),
       margin: const EdgeInsets.only(left:  25, right:  25, top:  10),

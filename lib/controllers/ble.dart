@@ -49,6 +49,7 @@ class BLEController extends GetxController {
   RxBool isScanning = false.obs;
   RxBool isConnecting = false.obs;
   RxString statusText = "".obs;
+  RxString status = "busy".obs;
 
   RxBool isOn = true.obs;
   RxBool isAvailable = true.obs;
@@ -62,7 +63,7 @@ class BLEController extends GetxController {
     
     final directory = await getApplicationDocumentsDirectory();
     final String fileName = '${DateFormat("yy-MM-dd").format(DateTime.now())}.json';
-    File file = File('${directory.path}/$fileName');
+    File file = File('${directory.path}/${connecteddevice.name}/$fileName');
 
     try {
       // Read the existing JSON data from the file if it exists
@@ -111,7 +112,7 @@ class BLEController extends GetxController {
       try {
         // Get the directory where the file will be saved
         final directory = await getApplicationDocumentsDirectory();
-        File file = File('${directory.path}/$fileName');
+        File file = File('${directory.path}/${connecteddevice.name}/$fileName');
 
         List<dynamic> json = [];
         Map<String, dynamic> line = {};
@@ -247,6 +248,7 @@ class BLEController extends GetxController {
     try { statusText.value = "Found $devicesCount device(s)."; } catch (e) {}
     WidgetsBinding.instance.addPostFrameCallback((_) {
         statusText.value = "Scanning for nearby devices";
+        status.value = "busy";
     });
 
     if (!isScanning.value) {
@@ -272,6 +274,7 @@ class BLEController extends GetxController {
         // Stop scanning after 5 seconds
         await ble.stopScan();
         statusText.value = "Found $devicesCount device(s).";
+        status.value = "ready";
         print("LOG: Scanning stopped.");
         isScanning.value = false;
         subscription.cancel();
@@ -310,6 +313,7 @@ class BLEController extends GetxController {
           style: TextStyle(color: Colors.white),
         ),
         background: const Color.fromARGB(255, 74, 74, 73),
+        slideDismissDirection: DismissDirection.up,
       );
     }
 
@@ -344,6 +348,7 @@ class BLEController extends GetxController {
               style: TextStyle(color: Colors.white),
             ),
             background: const Color.fromARGB(255, 73, 29, 20),
+            slideDismissDirection: DismissDirection.up,
           );
         }
 
@@ -402,6 +407,7 @@ class BLEController extends GetxController {
                       style: TextStyle(color: Colors.white),
                     ),
                     background: const Color.fromARGB(255, 30, 82, 40),
+                    slideDismissDirection: DismissDirection.up,
                   );
                 }
               });
@@ -429,6 +435,7 @@ class BLEController extends GetxController {
                     style: TextStyle(color: Colors.white),
                   ),
                   background: const Color.fromARGB(255, 30, 82, 40),
+                  slideDismissDirection: DismissDirection.up,
                 );
               }
             }
@@ -501,6 +508,7 @@ class BLEController extends GetxController {
                             style: const TextStyle(color: Colors.white),
                           ),
                           background: const Color.fromARGB(255, 94, 80, 13),
+                          slideDismissDirection: DismissDirection.up,
                         );
                       }
 
@@ -621,6 +629,7 @@ class BLEController extends GetxController {
     await for (var result in ScanResults) {
       count += 1;
       statusText.value = "Found $count devices.";
+      status.value = "ready";
     }
     
     return count;

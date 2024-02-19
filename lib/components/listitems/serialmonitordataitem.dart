@@ -32,7 +32,7 @@ class _SerialMonitorItemState extends State<SerialMonitorItem> {
   @override
   Widget build(BuildContext context) {
     Color color = widget.type == "incoming" ? const Color.fromARGB(255, 31, 212, 37) : 
-        widget.type == "outgoing" ? const Color.fromARGB(255, 194, 30, 139) : const Color.fromARGB(255, 223, 195, 13);
+        widget.type == "outgoing" ? const Color.fromARGB(255, 194, 30, 139) : Color.fromARGB(255, 223, 150, 13);
 
     double mediawidth = MediaQuery.of(context).size.width;
     print(MediaQuery.of(context).size.width);

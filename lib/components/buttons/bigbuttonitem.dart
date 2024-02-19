@@ -12,7 +12,7 @@ class BigButtonItem extends StatelessWidget {
       margin: const EdgeInsets.all(8),
       constraints: const BoxConstraints(maxWidth: 5, maxHeight: 5),
       decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.inversePrimary,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(2)),
       child: Center(
         child: Column(
@@ -21,7 +21,7 @@ class BigButtonItem extends StatelessWidget {
             Icon(
               icon,
               size: 30,
-              color: Theme.of(context).colorScheme.primary,
+              color: Theme.of(context).colorScheme.inversePrimary,
             ),
             const SizedBox(
               height: 4,
@@ -29,7 +29,7 @@ class BigButtonItem extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
+                color: Theme.of(context).colorScheme.inversePrimary,
               ),
             ),
           ],

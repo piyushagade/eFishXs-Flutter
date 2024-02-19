@@ -13,10 +13,27 @@ class DevicesPage extends StatefulWidget {
   State<DevicesPage> createState() => _DevicesPageState();
 }
 
-class _DevicesPageState extends State<DevicesPage> {
+class _DevicesPageState extends State<DevicesPage> with SingleTickerProviderStateMixin {
   int devicecount = 0;
 
+  late AnimationController _controller;
   late BLEController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -87,20 +104,56 @@ class _DevicesPageState extends State<DevicesPage> {
 
               // Status
               Obx(
-                () => Container(
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 77, 77, 77),
-                    borderRadius: BorderRadius.circular(2)
-                  ),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Column(
-                    children: [
-                      Text(controller.statusText.value),
-                    ],
-                  ),
+                () => Wrap(
+                  direction: Axis.vertical,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface,
+                        borderRadius: BorderRadius.circular(2)
+                      ),
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      margin:
+                          const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Visibility(
+                                visible: controller.status.value == "busy"
+                                    ? true
+                                    : false,
+                                child: Transform.scale(
+                                  scale: 0.8,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(right: 8),
+                                    child: RotationTransition(
+                                      turns: _controller,
+                                      child: const Icon(Icons.workspaces_filled),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Visibility(
+                                visible: controller.status.value == "ready"
+                                    ? true
+                                    : false,
+                                child: Transform.scale(
+                                  scale: 0.8,
+                                  child: const Padding(
+                                    padding: EdgeInsets.only(right: 8),
+                                    child: Icon(Icons.devices),
+                                  ),
+                                ),
+                              ),
+                              Text(controller.statusText.value),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
 
@@ -187,13 +240,18 @@ class _DevicesPageState extends State<DevicesPage> {
                                         
                                       return GestureDetector(
                                         onTap: () {
-                                          try { controller.activesnackbar.close(); } catch (e) {}
+                                          try {
+                                            controller.activesnackbar.close();
+                                          } catch (e) {}
 
                                           showModalBottomSheet(
                                               elevation: 0,
-                                              backgroundColor: Colors.transparent,
-                                              shape: const RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.vertical(
+                                              backgroundColor:
+                                                  Colors.transparent,
+                                              shape:
+                                                  const RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.vertical(
                                                   top: Radius.circular(
                                                       2), // Set the top border radius
                                                 ),
@@ -201,28 +259,42 @@ class _DevicesPageState extends State<DevicesPage> {
                                               context: context,
                                               builder: (context) => Container(
                                                     height: 185,
-                                                    margin: const EdgeInsets.all(10),
-                                                    alignment: Alignment.bottomCenter,
+                                                    margin:
+                                                        const EdgeInsets.all(
+                                                            10),
+                                                    alignment:
+                                                        Alignment.bottomCenter,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
-                                                          BorderRadius.circular(2),
-                                                          color: const Color.fromARGB(255, 195, 195, 195),
+                                                          BorderRadius.circular(
+                                                              2),
+                                                      color:
+                                                          const Color.fromARGB(
+                                                              255,
+                                                              195,
+                                                              195,
+                                                              195),
                                                     ),
                                                     child: Padding(
                                                       padding:
-                                                          const EdgeInsets.all(12.0),
+                                                          const EdgeInsets.all(
+                                                              12.0),
                                                       child: Column(
                                                         crossAxisAlignment:
-                                                            CrossAxisAlignment.center,
+                                                            CrossAxisAlignment
+                                                                .center,
                                                         children: [
                                                           Opacity(
                                                             opacity: 1,
                                                             child: Text(
                                                               "Are you certain you wish to connect to this device?",
-                                                              textAlign: TextAlign.center,
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
                                                               style: TextStyle(
                                                                 fontSize: 16,
-                                                                color: Theme.of(context)
+                                                                color: Theme.of(
+                                                                        context)
                                                                     .colorScheme
                                                                     .primary,
                                                               ),
@@ -233,10 +305,12 @@ class _DevicesPageState extends State<DevicesPage> {
                                                           ),
                                                           Text(
                                                             deviceName,
-                                                            textAlign: TextAlign.left,
+                                                            textAlign:
+                                                                TextAlign.left,
                                                             style: TextStyle(
                                                               fontSize: 18,
-                                                              color: Theme.of(context)
+                                                              color: Theme.of(
+                                                                      context)
                                                                   .colorScheme
                                                                   .primary,
                                                             ),
@@ -245,10 +319,13 @@ class _DevicesPageState extends State<DevicesPage> {
                                                             opacity: 0.4,
                                                             child: Text(
                                                               deviceId,
-                                                              textAlign: TextAlign.center,
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
                                                               style: TextStyle(
                                                                 fontSize: 14,
-                                                                color: Theme.of(context)
+                                                                color: Theme.of(
+                                                                        context)
                                                                     .colorScheme
                                                                     .primary,
                                                               ),
@@ -257,12 +334,16 @@ class _DevicesPageState extends State<DevicesPage> {
                                                           const SizedBox(
                                                             height: 6,
                                                           ),
-                                                          
                                                           ElevatedButton(
                                                             style: ButtonStyle(
-                                                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                              shape: MaterialStateProperty
+                                                                  .all<
+                                                                      RoundedRectangleBorder>(
                                                                 RoundedRectangleBorder(
-                                                                  borderRadius: BorderRadius.circular(2.0), // Set the border radius here
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              2.0), // Set the border radius here
                                                                 ),
                                                               ),
                                                               backgroundColor:
@@ -291,32 +372,35 @@ class _DevicesPageState extends State<DevicesPage> {
                                                             child: Text(
                                                               "Connect",
                                                               style: TextStyle(
-                                                                  color:
-                                                                      Theme.of(context)
-                                                                          .colorScheme
-                                                                          .inversePrimary),
+                                                                  color: Theme.of(
+                                                                          context)
+                                                                      .colorScheme
+                                                                      .inversePrimary),
                                                             ),
                                                             onPressed: () {
-                                        
                                                               // Hide bottom sheet
-                                                              Navigator.pop(context);
-                                        
+                                                              Navigator.pop(
+                                                                  context);
+
                                                               // Connect to the device
-                                                              controller.connectdevice(context, data.device);
+                                                              controller
+                                                                  .connectdevice(
+                                                                      context,
+                                                                      data.device);
                                                             },
                                                           ),
                                                         ],
                                                       ),
                                                     ),
-                                                  ));
+                                            ),
+                                          );
                                         },
                                         child: Card(
                                           elevation: 0,
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(2.0), // Set the border radius here
                                           ),
-                                          margin: const EdgeInsets.symmetric(
-                                              horizontal: 8, vertical: 8),
+                                          margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [

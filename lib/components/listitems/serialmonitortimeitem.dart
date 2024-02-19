@@ -39,18 +39,18 @@ class _SerialMonitorTimeItemState extends State<SerialMonitorTimeItem> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Transform.scale(
-            scale: 0.8,
+            scale: 1,
             child: Text(
               textAlign: TextAlign.right,
               DateFormat(formats[_prefs?.getInt("settings/serialmonitor/timestampformat") ?? 1]).format(DateTime.now()),
               style: TextStyle(
-                color: const Color.fromARGB(255, 203, 203, 203),
+                color: Theme.of(context).colorScheme.inversePrimary,
                 fontSize: fontsizes[_prefs?.getInt("settings/serialmonitor/fontsize") ?? 3] + 3,
               ),
             ),
           ),
       
-          const SizedBox(width: 2),
+          const SizedBox(width: 6),
         ],
       ),
     );

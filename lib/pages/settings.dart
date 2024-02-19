@@ -113,7 +113,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     await _prefs?.setInt("settings/general/theme", newvalue);
                     
                     setState(() {
-                      Provider.of<ThemeProvider>(context).settheme(["Dark", "Dark Grey", "Light Grey", "Light"][newvalue]);
+                      Provider.of<ThemeProvider>(context, listen: false).settheme(["Dark", "Dark Grey", "Light Grey", "Light"][newvalue]);
                     });
                   },
                 ),
