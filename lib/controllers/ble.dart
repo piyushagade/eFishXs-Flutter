@@ -385,7 +385,7 @@ class BLEController extends GetxController {
             if (targetcharacteristic != null) {
               print("LOG: Valid GatorByte device detected.");
               Future.delayed(const Duration(milliseconds: 100), () {
-                Get.off(() => const HomePageWidget());
+                Get.to(() => const HomePageWidget());
                 
                 if (_prefs?.getBool("settings/general/inappnotifications") ?? true) {
                   // activesnackbar = Get.snackbar(
@@ -529,9 +529,6 @@ class BLEController extends GetxController {
                       print("LOGERR: Error while cleanup after disconnecting.");
                       print(e);
                     }
-
-                    // // Show devices page
-                    // Get.offAll(DevicesPage());
                   }
                 });
               },
