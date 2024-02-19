@@ -216,7 +216,7 @@ class _DevicesPageState extends State<DevicesPage> with SingleTickerProviderStat
                                   itemBuilder: (context, index) {
                                     final data = snapshot.data![index];
                                     String deviceName = data.device.name.trim() != ""
-                                        ? data.device.name
+                                        ? data.device.name.trim()
                                         : 'Unknown Device'; // Handle null device name
                                     String deviceRssi = data.rssi.toString();
 
