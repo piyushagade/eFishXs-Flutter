@@ -21,7 +21,7 @@ class HomePageWidget extends StatefulWidget {
 class _HomePageWidgetState extends State<HomePageWidget> {
   SharedPreferences? _prefs;
   final GlobalKey bottomNavBarKey = GlobalKey();
-    final controller = Get.find<BLEController>();
+  final controller = Get.find<BLEController>();
 
   int? _selectedtabindex = 0;
 
@@ -36,6 +36,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
   @override
   void initState() {
     super.initState();
+    print("LOG: Loading home page scaffold.");
+
     SharedPreferences.getInstance().then((value) {
       _prefs = value; 
       navigatebottombar(_prefs?.getInt("settings/general/openinpage") ?? 0);

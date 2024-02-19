@@ -1,13 +1,16 @@
 // ignore_for_file: avoid_print, dead_code
 
+import 'package:efishxs/controllers/ble.dart';
 import 'package:efishxs/pages/devices.dart';
+import 'package:efishxs/pages/home.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class IntroPage extends StatelessWidget {
-  const IntroPage({super.key});
+  IntroPage({super.key});
+  final controller = Get.find<BLEController>();
 
   Future<bool?> requestMultiplePermissions() async {
     Map<Permission, PermissionStatus> statuses = await [
@@ -29,14 +32,15 @@ class IntroPage extends StatelessWidget {
 
       // print ("LOG: BL permission granted: $permissiongranted");
 
-      Future.delayed(const Duration(seconds: 2), () {
-        // Navigator.pushReplacement(
-        //   context,
-        //   MaterialPageRoute(builder: (context) => const DevicesPage()),
-        // );
-
-        Get.to(() => const DevicesPage());
-      });
+      if (!controller.connected.value) {
+        print("LOG: Loading intro page.");
+        Future.delayed(const Duration(seconds: 1), () {
+          Get.to(() => const DevicesPage());
+        });
+      }
+      else {
+        Get.to(() => const HomePageWidget());
+      }
     // });
 
     return Scaffold(

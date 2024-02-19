@@ -15,7 +15,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SerialMonitorPage extends StatefulWidget {
   const SerialMonitorPage({super.key});
 
-
   @override
   State<SerialMonitorPage> createState() => _SerialMonitorPageState();
 }
@@ -41,6 +40,7 @@ class _SerialMonitorPageState extends State<SerialMonitorPage> {
   @override
   void initState() {
     super.initState();
+    print("LOG: Loading serialmonitor subpage.");
   }
 
   @override

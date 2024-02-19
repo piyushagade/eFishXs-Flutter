@@ -35,6 +35,8 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   void initState() {
     super.initState();
+    print("LOG: Loading settings subpage.");
+    
     _prefsFuture = SharedPreferences.getInstance().then((value) {
       setState(() {
         _prefs = value;
@@ -111,20 +113,21 @@ class _SettingsPageState extends State<SettingsPage> {
                   label: "Theme",
                   description: "Select an app-wide theme.",
                   items: const ["Dark", "Dark Grey", "Light Grey", "Light"],
-                  defaultItemIndex:
-                      _prefs?.getInt("settings/general/theme") ?? 0,
+                  defaultItemIndex: _prefs?.getInt("settings/general/theme") ?? 0,
                   onChanged: (int newvalue) async {
                     await _prefs?.setInt("settings/general/theme", newvalue);
 
-                    setState(() {
+                    if (context.mounted) {
                       Provider.of<ThemeProvider>(context, listen: false)
-                          .settheme([
-                        "Dark",
-                        "Dark Grey",
-                        "Light Grey",
-                        "Light"
-                      ][newvalue]);
-                    });
+                          .settheme(
+                        [
+                          "Dark",
+                          "Dark Grey",
+                          "Light Grey",
+                          "Light",
+                        ][newvalue],
+                      );
+                    }
                   },
                 ),
                 Visibility(

@@ -1,3 +1,6 @@
+// ignore_for_file: avoid_print
+
+import 'package:efishxs/controllers/ble.dart';
 import 'package:efishxs/theme/themeprovider.dart';
 import 'package:efishxs/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -30,12 +33,24 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
+
+  @override
+  void initState() {
+    super.initState();
+    print("LOG: Loading MaterialApp app.");
+    
+    // Initialize BLE controller
+    final controller = Get.put(BLEController());
+  }
+
   @override
   Widget build(BuildContext context) {
+    print("LOG: Rebuilding MaterialApp widget.");
+
     return OverlaySupport.global(
       child: GetMaterialApp(
         debugShowCheckedModeBanner: false,
-        home: const IntroPage(),
+        home: IntroPage(),
         theme: Provider.of<ThemeProvider>(context, listen: true).themeData,
       ),
     );

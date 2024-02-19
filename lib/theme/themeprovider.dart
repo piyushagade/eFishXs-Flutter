@@ -11,7 +11,7 @@ class ThemeProvider with ChangeNotifier {
 
   ThemeProvider() {
     _themeData = darkgreymode; // Default theme
-    _loadThemeData();
+    // _loadThemeData();
   }
 
   Future<void> _loadThemeData() async {
@@ -36,7 +36,8 @@ class ThemeProvider with ChangeNotifier {
         _themeData = lightmode;
       }
       _themeLoaded = true;
-      notifyListeners();
+
+      // notifyListeners();
     }
     catch (e) {
       print (e);
@@ -54,7 +55,7 @@ class ThemeProvider with ChangeNotifier {
 
   set themeData(ThemeData themeData) {
     _themeData = themeData;
-    notifyListeners();
+    // notifyListeners();
 
     SharedPreferences.getInstance().then((value){
       _prefs = value;

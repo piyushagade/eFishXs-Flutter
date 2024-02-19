@@ -20,6 +20,8 @@ class _DashboardWidgetState extends State<DashboardWidget> {
   @override
   void initState() {
     super.initState();
+    print("LOG: Loading dashboard subpage.");
+
     _prefsFuture = SharedPreferences.getInstance().then((value) {
       setState(() {
         _prefs = value; 
@@ -30,9 +32,6 @@ class _DashboardWidgetState extends State<DashboardWidget> {
   @override
   Widget build(BuildContext context) {
     print("Showing dashboard");
-    final controller = Get.put(BLEController(
-      onDisconnect: () {},
-    ));
 
     Widget body = Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,

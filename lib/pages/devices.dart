@@ -22,6 +22,8 @@ class _DevicesPageState extends State<DevicesPage> with SingleTickerProviderStat
   @override
   void initState() {
     super.initState();
+    print("LOG: Loading devices page.");
+
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
@@ -39,9 +41,8 @@ class _DevicesPageState extends State<DevicesPage> with SingleTickerProviderStat
   Widget build(BuildContext context) {
     print("LOG: Instantiating BLEController.");
     
-    final controller = Get.put(BLEController(
-      onDisconnect: () {},
-    ));
+    // final controller = Get.put(BLEController());
+    final controller = Get.find<BLEController>();
 
     // Disconnect from any previosuly connected devices
     controller.disconnectalldevices();
