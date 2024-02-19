@@ -36,7 +36,7 @@ class _SettingsPageState extends State<SettingsPage> {
   void initState() {
     super.initState();
     print("LOG: Loading settings subpage.");
-    
+
     _prefsFuture = SharedPreferences.getInstance().then((value) {
       setState(() {
         _prefs = value;
@@ -111,7 +111,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 SettingsDropdownWidget(
                   label: "Theme",
-                  description: "Select an app-wide theme.",
+                  description: "Select an app-wide theme. The darker themes are more battery-friendly.",
                   items: const ["Dark", "Dark Grey", "Light Grey", "Light"],
                   defaultItemIndex: _prefs?.getInt("settings/general/theme") ?? 0,
                   onChanged: (int newvalue) async {
