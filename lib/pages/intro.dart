@@ -35,7 +35,7 @@ class IntroPage extends StatelessWidget {
         //   MaterialPageRoute(builder: (context) => const DevicesPage()),
         // );
 
-        Get.to(const DevicesPage());
+        Get.to(() => const DevicesPage());
       });
     // });
 

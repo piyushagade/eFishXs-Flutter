@@ -30,11 +30,9 @@ class _DashboardWidgetState extends State<DashboardWidget> {
   @override
   Widget build(BuildContext context) {
     print("Showing dashboard");
-    // final controller = Get.put(BLEController(
-    //   onDisconnect: () {},
-    // ));
-
-    final controller = Get.find<BLEController>();
+    final controller = Get.put(BLEController(
+      onDisconnect: () {},
+    ));
 
     Widget body = Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,

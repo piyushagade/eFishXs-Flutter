@@ -82,25 +82,25 @@ class BLEController extends GetxController {
   }
 
   Future<String> getlocation() async {
-    print("LOG: Getting location data.");
+    // print("LOG: Getting location data.");
     String locationdata = "";
 
     try {
-      print("LOG: Getting last known location.");
+      // print("LOG: Getting last known location.");
       Position? lastposition = await Geolocator.getLastKnownPosition();
       locationdata = '${lastposition?.latitude}, ${lastposition?.longitude}';
 
       // print("LOG: Getting current location.");
       // Position position = await Geolocator.getCurrentPosition();
       // locationdata = '${position?.latitude}, ${position?.longitude}';
-      print("LOG: All position information acquired.");
+      // print("LOG: All position information acquired.");
 
       return locationdata;
     } catch (e) {
       locationdata = 'Error getting location: $e';
     }
 
-    print("LOG: $locationdata");
+    // print("LOG: $locationdata");
     return locationdata;
   }
 
@@ -125,7 +125,7 @@ class BLEController extends GetxController {
           // If the file doesn't exist, create it and write the line
           file.createSync(recursive: true);
           file.writeAsStringSync('[]');
-          print('LOG: File created and line appended: $fileName');
+          // print('LOG: File created and line appended: $fileName');
         } 
         else {
 
@@ -139,11 +139,11 @@ class BLEController extends GetxController {
 
         // If the file exists, append the line
         file.writeAsStringSync(jsonEncode(json));
-        print('LOG: Line appended to existing file: ${file.path}');
+        // print('LOG: Line appended to existing file: ${file.path}');
 
 
-        print('LOG: Line added: ${jsonEncode(line)}');
-        print('LOG: Total lines: ${json.length}');
+        // print('LOG: Line added: ${jsonEncode(line)}');
+        // print('LOG: Total lines: ${json.length}');
 
       } catch (e) {
         print('LOG: Failed to write file: $e');
