@@ -21,9 +21,9 @@ class HomePageWidget extends StatefulWidget {
 class _HomePageWidgetState extends State<HomePageWidget> {
   SharedPreferences? _prefs;
   final GlobalKey bottomNavBarKey = GlobalKey();
+    final controller = Get.find<BLEController>();
 
   int? _selectedtabindex = 0;
-  final bool _bl_connection_status = true;
 
   void navigatebottombar (int index) {
     setState(() {
@@ -45,8 +45,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
         Wakelock.enable();
       }
     });
-  }
-  
+  }  
 
   @override
   void dispose() {
@@ -55,9 +54,6 @@ class _HomePageWidgetState extends State<HomePageWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(BLEController(
-      onDisconnect: () {},
-    ));
 
     return Scaffold(
 

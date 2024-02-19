@@ -2,6 +2,7 @@
 
 import 'package:efishxs/pages/devices.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -29,10 +30,12 @@ class IntroPage extends StatelessWidget {
       // print ("LOG: BL permission granted: $permissiongranted");
 
       Future.delayed(const Duration(seconds: 2), () {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const DevicesPage()),
-        );
+        // Navigator.pushReplacement(
+        //   context,
+        //   MaterialPageRoute(builder: (context) => const DevicesPage()),
+        // );
+
+        Get.to(const DevicesPage());
       });
     // });
 
