@@ -215,7 +215,7 @@ class _DevicesPageState extends State<DevicesPage> with SingleTickerProviderStat
                                   itemCount: snapshot.data!.length,
                                   itemBuilder: (context, index) {
                                     final data = snapshot.data![index];
-                                    String deviceName = data.device.name != ""
+                                    String deviceName = data.device.name.trim() != ""
                                         ? data.device.name
                                         : 'Unknown Device'; // Handle null device name
                                     String deviceRssi = data.rssi.toString();
@@ -258,142 +258,142 @@ class _DevicesPageState extends State<DevicesPage> with SingleTickerProviderStat
                                                 ),
                                               ),
                                               context: context,
-                                              builder: (context) => Container(
-                                                    height: 185,
-                                                    margin:
-                                                        const EdgeInsets.all(
-                                                            10),
-                                                    alignment:
-                                                        Alignment.bottomCenter,
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              2),
-                                                      color:
-                                                          const Color.fromARGB(
-                                                              255,
-                                                              195,
-                                                              195,
-                                                              195),
-                                                    ),
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              12.0),
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          Opacity(
-                                                            opacity: 1,
-                                                            child: Text(
-                                                              "Are you certain you wish to connect to this device?",
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .center,
-                                                              style: TextStyle(
-                                                                fontSize: 16,
-                                                                color: Theme.of(
-                                                                        context)
-                                                                    .colorScheme
-                                                                    .primary,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          Text(
-                                                            deviceName,
-                                                            textAlign:
-                                                                TextAlign.left,
-                                                            style: TextStyle(
-                                                              fontSize: 18,
-                                                              color: Theme.of(
-                                                                      context)
-                                                                  .colorScheme
-                                                                  .primary,
-                                                            ),
-                                                          ),
-                                                          Opacity(
-                                                            opacity: 0.4,
-                                                            child: Text(
-                                                              deviceId,
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .center,
-                                                              style: TextStyle(
-                                                                fontSize: 14,
-                                                                color: Theme.of(
-                                                                        context)
-                                                                    .colorScheme
-                                                                    .primary,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 6,
-                                                          ),
-                                                          ElevatedButton(
-                                                            style: ButtonStyle(
-                                                              shape: MaterialStateProperty
-                                                                  .all<
-                                                                      RoundedRectangleBorder>(
-                                                                RoundedRectangleBorder(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              2.0), // Set the border radius here
-                                                                ),
-                                                              ),
-                                                              backgroundColor:
-                                                                  MaterialStateProperty
-                                                                      .resolveWith<
-                                                                          Color>(
-                                                                (Set<MaterialState>
-                                                                    states) {
-                                                                  if (states.contains(
-                                                                      MaterialState
-                                                                          .pressed)) {
-                                                                    // Return the color when the button is pressed
-                                                                    return Theme.of(
+                                              builder: (context) => Wrap(
+                                                direction: Axis.horizontal,
+                                                children: [
+                                                  Container(
+                                                        margin:
+                                                            const EdgeInsets.all(
+                                                                10),
+                                                        alignment:
+                                                            Alignment.bottomCenter,
+                                                        decoration: BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                  2),
+                                                          color:
+                                                              Theme.of(context).colorScheme.inversePrimary,
+                                                        ),
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets.all(
+                                                                  12.0),
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              Opacity(
+                                                                opacity: 1,
+                                                                child: Text(
+                                                                  "An attempt to connect to this device has been initiated. Please confirm.",
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                  style: TextStyle(
+                                                                    fontSize: 14,
+                                                                    color: Theme.of(
                                                                             context)
                                                                         .colorScheme
-                                                                        .primary;
-                                                                  }
-                                                                  // Return the default color
-                                                                  return Theme.of(
-                                                                          context)
-                                                                      .colorScheme
-                                                                      .primary;
-                                                                },
+                                                                        .primary,
+                                                                  ),
+                                                                ),
                                                               ),
-                                                            ),
-                                                            child: Text(
-                                                              "Connect",
-                                                              style: TextStyle(
-                                                                  color: Theme.of(
-                                                                          context)
-                                                                      .colorScheme
-                                                                      .inversePrimary),
-                                                            ),
-                                                            onPressed: () {
-                                                              // Hide bottom sheet
-                                                              Navigator.pop(
-                                                                  context);
+                                                              const SizedBox(
+                                                                height: 10,
+                                                              ),
 
-                                                              // Connect to the device
-                                                              controller
-                                                                  .connectdevice(
-                                                                      context,
-                                                                      data.device);
-                                                            },
+                                                              // Device name
+                                                              Row(
+                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                children: [
+                                                                  Icon(
+                                                                    Icons.bluetooth_connected,
+                                                                      color: Theme.of(context).colorScheme.primary,
+                                                                  ),
+                                                                  const SizedBox(
+                                                                    width: 8,
+                                                                  ),
+                                                                  Text(
+                                                                    deviceName,
+                                                                    textAlign:
+                                                                        TextAlign.left,
+                                                                    style: TextStyle(
+                                                                      fontSize: 18,
+                                                                      color: Theme.of(context).colorScheme.primary,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+
+                                                              // MAC address
+                                                              Visibility(
+                                                                visible: false,
+                                                                child: Opacity(
+                                                                  opacity: 0.4,
+                                                                  child: Expanded(
+                                                                    child: SingleChildScrollView(
+                                                                      scrollDirection: Axis.horizontal,
+                                                                      child: Text(
+                                                                        deviceId,
+                                                                        textAlign:
+                                                                            TextAlign
+                                                                                .center,
+                                                                        style: TextStyle(
+                                                                          fontSize: 14,
+                                                                          color: Theme.of(
+                                                                                  context)
+                                                                              .colorScheme
+                                                                              .primary,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+
+                                                              const SizedBox(
+                                                                height: 10,
+                                                              ),
+
+                                                              // Connect button
+                                                              GestureDetector(
+                                                                onTap: () {
+
+                                                                // Hide bottom sheet
+                                                                Navigator.pop(
+                                                                    context);
+                                                
+                                                                // Connect to the device
+                                                                controller
+                                                                    .connectdevice(
+                                                                        context,
+                                                                        data.device);
+                                                                },
+                                                                child: Container(
+                                                                  decoration: BoxDecoration(
+                                                                    color: Theme.of(context).colorScheme.primary,
+                                                                    borderRadius: BorderRadius.circular(2),
+                                                                  ),
+                                                                  child: Padding(
+                                                                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                                                    child: Text(
+                                                                      "Connect",
+                                                                      style: TextStyle(
+                                                                        color: Theme.of(context).colorScheme.inversePrimary,
+                                                                        fontSize: 16,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              
+                                                            ],
                                                           ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                            ),
+                                                        ),
+                                                                                              ),
+                                                ],
+                                              ),
                                           );
                                         },
                                         child: Card(
@@ -410,29 +410,17 @@ class _DevicesPageState extends State<DevicesPage> with SingleTickerProviderStat
                                                 title: Text(deviceName),
                                                 subtitle: Row(
                                                   children: [
-                                                    Opacity(
-                                                      opacity: 0.4,
-                                                      child: Text(deviceId,
-                                                          style: TextStyle(
-                                                              color: Theme.of(context)
-                                                                  .colorScheme
-                                                                  .inversePrimary,
-                                                              fontSize: 14)),
-                                                    ),
-                                                    const Spacer(),
-                                                    Opacity(
-                                                      opacity: 0.8,
-                                                      child: Text("$deviceRssi dB",
-                                                        style: const TextStyle(
-                                                          color: Color.fromARGB(255, 63, 255, 185),
-                                                          fontSize: 14,
-                                                          fontWeight: FontWeight.w400,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    const SizedBox(
-                                                      width: 8,
-                                                    ),
+                                                    // Opacity(
+                                                    //   opacity: 0.4,
+                                                    //   child: Text(deviceId,
+                                                    //       style: TextStyle(
+                                                    //           color: Theme.of(context)
+                                                    //               .colorScheme
+                                                    //               .inversePrimary,
+                                                    //           fontSize: 14)),
+                                                    // ),
+                                                    // const Spacer(),
+                                                    
                                                     Opacity(
                                                       opacity: 0.8,
                                                       child: Text(deviceType,
@@ -440,6 +428,21 @@ class _DevicesPageState extends State<DevicesPage> with SingleTickerProviderStat
                                                           color: Color.fromARGB(255, 82, 175, 251),
                                                           fontSize: 14,
                                                           fontWeight: FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    
+                                                    const SizedBox(
+                                                      width: 8,
+                                                    ),
+
+                                                    Opacity(
+                                                      opacity: 0.8,
+                                                      child: Text("$deviceRssi dB",
+                                                        style: const TextStyle(
+                                                          color: Color.fromARGB(255, 63, 255, 185),
+                                                          fontSize: 14,
+                                                          fontWeight: FontWeight.w400,
                                                         ),
                                                       ),
                                                     ),
