@@ -21,9 +21,8 @@ class SerialMonitorPage extends StatefulWidget {
 }
 
 class _SerialMonitorPageState extends State<SerialMonitorPage> {
-  // final controller = Get.find<BLEController>();
-  final controller = Get.put(BLEController(onDisconnect: () => { },));
-
+  final controller = Get.find<BLEController>();
+  
   SharedPreferences? _prefs;
   final ScrollController _scrollController = ScrollController();
 
