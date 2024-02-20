@@ -40,7 +40,7 @@ class _AppState extends State<App> {
     print("LOG: Loading MaterialApp app.");
     
     // Initialize BLE controller
-    final controller = Get.put(BLEController());
+    Get.put(BLEController());
   }
 
   @override

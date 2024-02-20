@@ -3,9 +3,9 @@
 import 'package:efishxs/controllers/ble.dart';
 import 'package:efishxs/pages/devices.dart';
 import 'package:efishxs/pages/home.dart';
+import 'package:efishxs/pages/onboarding.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:overlay_support/overlay_support.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class IntroPage extends StatelessWidget {
@@ -35,7 +35,7 @@ class IntroPage extends StatelessWidget {
       if (!controller.connected.value) {
         print("LOG: Loading intro page.");
         Future.delayed(const Duration(seconds: 1), () {
-          Get.to(() => const DevicesPage());
+          Get.to(() => const OnboardingPage());
         });
       }
       else {
